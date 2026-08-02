@@ -18,6 +18,34 @@ import {
   type AgentPostDto,
   type NotificationDto,
 } from '@agentwork/contracts';
+import { createHmac, timingSafeEqual } from 'node:crypto';
+
+export function deriveWebhookSecret(
+  masterSecret: string,
+  endpointId: string,
+  secretVersion = 1,
+) {
+  return createHmac('sha256', masterSecret)
+    .update(`${endpointId}:${secretVersion}`)
+    .digest('hex');
+}
+
+export function verifyWebhookSignature(
+  secret: string,
+  timestamp: string,
+  rawBody: string | Buffer,
+  signature: string,
+  toleranceSeconds = 300,
+) {
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > toleranceSeconds)
+    return false;
+  const expected = createHmac('sha256', secret)
+    .update(`${timestamp}.`)
+    .update(rawBody)
+    .digest();
+  const supplied = Buffer.from(signature.replace(/^sha256=/, ''), 'hex');
+  return supplied.length === expected.length && timingSafeEqual(supplied, expected);
+}
 
 export type ClientOptions = {
   apiKey?: string;
