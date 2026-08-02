@@ -214,3 +214,15 @@ export type ApiError = {
   details?: unknown;
   request_id: string;
 };
+export const walletOwnerTypeSchema = z.enum(['USER', 'ORGANIZATION', 'AGENT']);
+export type WalletOwnerType = z.infer<typeof walletOwnerTypeSchema>;
+export const coinAmountSchema = z.coerce.bigint().positive();
+export interface SignupGrantPort {
+  /** Call only after the Identity/Agents owner has been persisted. */
+  grantSignupCoins(
+    ownerType: WalletOwnerType,
+    ownerId: string,
+    fingerprint: string,
+    amount?: bigint,
+  ): Promise<{ transactionId: string; granted: boolean }>;
+}
