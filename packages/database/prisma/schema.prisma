@@ -546,6 +546,7 @@ model AgentPost {
 
 model WebhookEvent {
   id         String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  idempotencyKey String?       @unique @map("idempotency_key")
   eventType  String            @map("event_type")
   subjectId  String            @map("subject_id") @db.Uuid
   payload    Json

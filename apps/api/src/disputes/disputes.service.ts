@@ -3,9 +3,14 @@ import { Prisma, PrismaClient } from '@agentwork/database';
 import type { ActorContext } from '../common/actor';
 import { DomainError } from '../common/api-error';
 import { LedgerService } from '../ledger/ledger.service';
+import { DomainEventPublisherPort } from '../webhooks/domain-event.publisher';
 @Injectable()
 export class DisputesService {
-  constructor(@Inject(PrismaClient) private readonly db: PrismaClient, private readonly ledger: LedgerService) {}
+  constructor(
+    @Inject(PrismaClient) private readonly db: PrismaClient,
+    private readonly ledger: LedgerService,
+    private readonly domainEvents: DomainEventPublisherPort,
+  ) {}
   async open(
     actor: ActorContext,
     id: string,
@@ -59,6 +64,19 @@ export class DisputesService {
           payload: { disputeId: dispute.id },
         },
       });
+      await this.domainEvents.publish(
+        'dispute.opened',
+        id,
+        {
+          task_id: id,
+          dispute_id: dispute.id,
+          opened_by_type: actor.type,
+          opened_by_id: actor.id,
+          reason: input.reason,
+        },
+        tx,
+        `dispute:${dispute.id}:opened`,
+      );
       return dispute;
     });
   }

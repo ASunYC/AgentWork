@@ -34,6 +34,7 @@ export abstract class DomainEventPublisherPort {
     subjectId: string,
     data: DomainEventData,
     tx?: PrismaTransaction,
+    idempotencyKey?: string,
   ): Promise<DomainEventEnvelope>;
 }
 
@@ -48,8 +49,16 @@ export class PrismaDomainEventPublisher extends DomainEventPublisherPort {
     subjectId: string,
     data: DomainEventData,
     tx?: PrismaTransaction,
+    idempotencyKey?: string,
   ) {
     const client = tx ?? this.db;
+    if (idempotencyKey) {
+      const existing = await client.webhookEvent.findUnique({
+        where: { idempotencyKey },
+      });
+      if (existing)
+        return existing.payload as unknown as DomainEventEnvelope;
+    }
     const id = crypto.randomUUID();
     const occurredAt = new Date();
     const envelope: DomainEventEnvelope = {
@@ -63,6 +72,7 @@ export class PrismaDomainEventPublisher extends DomainEventPublisherPort {
     await client.webhookEvent.create({
       data: {
         id,
+        idempotencyKey,
         eventType: type,
         subjectId,
         payload: envelope as unknown as Prisma.InputJsonValue,

@@ -9,6 +9,7 @@ import { PrismaClient } from '@agentwork/database';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { LedgerService } from './ledger.service';
 import { TasksService } from '../tasks/tasks.service';
+import { PrismaDomainEventPublisher } from '../webhooks/domain-event.publisher';
 import { DeliveriesService } from '../deliveries/deliveries.service';
 import { DisputesService } from '../disputes/disputes.service';
 import { OperationsService } from '../operations/operations.service';
@@ -18,6 +19,7 @@ const prismaCli = require.resolve('prisma/build/index.js');
 let container: StartedPostgreSqlContainer;
 let client: PrismaClient;
 let service: LedgerService;
+let events: PrismaDomainEventPublisher;
 
 async function balance(ownerType: 'USER' | 'AGENT', ownerId: string) {
   return service.getWallet({ ownerType, ownerId });
@@ -35,7 +37,8 @@ beforeAll(async () => {
     env: process.env,
   });
   client = new PrismaClient();
-  service = new LedgerService(client);
+  events = new PrismaDomainEventPublisher(client);
+  service = new LedgerService(client, events);
 }, 120_000);
 
 afterAll(async () => {
@@ -89,8 +92,8 @@ describe.sequential('LedgerService PostgreSQL integration', () => {
     });
     await service.grantSignupCoins('USER', user.id, `user:${user.id}`);
     await service.grantSignupCoins('AGENT', agent.id, `agent:${agent.id}`);
-    const tasks = new TasksService(client, service);
-    const deliveries = new DeliveriesService(client, service);
+    const tasks = new TasksService(client, service, events);
+    const deliveries = new DeliveriesService(client, service, events);
     const human = {
       type: 'USER' as const,
       id: user.id,
@@ -131,6 +134,22 @@ describe.sequential('LedgerService PostgreSQL integration', () => {
     expect(
       (await client.task.findUniqueOrThrow({ where: { id: task.id } })).status,
     ).toBe('COMPLETED_SETTLED');
+    const outbox = await client.webhookEvent.findMany({
+      where: { subjectId: task.id },
+      select: { eventType: true, idempotencyKey: true },
+    });
+    expect(outbox.map((event) => event.eventType).sort()).toEqual(
+      [
+        'coin.frozen',
+        'coin.released',
+        'delivery.accepted',
+        'task.assigned',
+        'task.opened',
+      ].sort(),
+    );
+    expect(new Set(outbox.map((event) => event.idempotencyKey)).size).toBe(
+      outbox.length,
+    );
   });
 
   it('rolls ledger writes back when the surrounding task transaction fails', async () => {
@@ -141,6 +160,7 @@ describe.sequential('LedgerService PostgreSQL integration', () => {
       publisherId,
       `rollback:${publisherId}`,
     );
+    const outboxBefore = await client.webhookEvent.count();
     await expect(
       client.$transaction(async (tx) => {
         await service.freeze({
@@ -157,6 +177,7 @@ describe.sequential('LedgerService PostgreSQL integration', () => {
       available: '1000',
       frozen: '0',
     });
+    expect(await client.webhookEvent.count()).toBe(outboxBefore);
   });
 
   it('keeps task state unchanged when the ledger operation fails', async () => {
@@ -167,7 +188,7 @@ describe.sequential('LedgerService PostgreSQL integration', () => {
         status: 'ACTIVE',
       },
     });
-    const tasks = new TasksService(client, service);
+    const tasks = new TasksService(client, service, events);
     const human = {
       type: 'USER' as const,
       id: user.id,

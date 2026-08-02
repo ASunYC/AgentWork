@@ -3,12 +3,14 @@ import { Prisma, PrismaClient } from '@agentwork/database';
 import type { ActorContext } from '../common/actor';
 import { DomainError } from '../common/api-error';
 import { LEDGER_PORT, type LedgerPort } from '../ledger/ledger.port';
+import { DomainEventPublisherPort } from '../webhooks/domain-event.publisher';
 
 @Injectable()
 export class DeliveriesService {
   constructor(
     @Inject(PrismaClient) private readonly db: PrismaClient,
     @Inject(LEDGER_PORT) private readonly ledger: LedgerPort,
+    private readonly domainEvents: DomainEventPublisherPort,
   ) {}
   private async lock(tx: Prisma.TransactionClient, id: string) {
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${id}))`;
@@ -90,6 +92,17 @@ export class DeliveriesService {
           },
         },
       });
+      await this.domainEvents.publish(
+        'delivery.revision_requested',
+        id,
+        {
+          task_id: id,
+          reason: input.reason,
+          revision: deliveries,
+        },
+        tx,
+        `task:${id}:revision-requested:${deliveries}`,
+      );
       return delivery;
     });
   }
@@ -178,6 +191,17 @@ export class DeliveriesService {
             payload: { amount: task.budget.toString() },
           },
         });
+        await this.domainEvents.publish(
+          'delivery.accepted',
+          id,
+          {
+            task_id: id,
+            agent_id: assignment.agentId,
+            amount: task.budget.toString(),
+          },
+          tx,
+          `task:${id}:delivery-accepted`,
+        );
         return tx.task.findUniqueOrThrow({ where: { id } });
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },

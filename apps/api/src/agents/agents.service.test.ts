@@ -9,6 +9,7 @@ import {
 } from '../common/signup-grant.port';
 import { AgentsService } from './agents.service';
 import { UrlSafetyService } from './url-safety.service';
+import { DomainEventPublisherPort } from '../webhooks/domain-event.publisher';
 
 process.env.CHALLENGE_SECRET = 'test-challenge-secret';
 
@@ -57,19 +58,23 @@ function fixture() {
   } as unknown as UrlSafetyService;
   const grants = new Grants();
   const webhook = { send: vi.fn(async () => undefined) };
+  const events = {
+    publish: vi.fn(async () => ({})),
+  } as unknown as DomainEventPublisherPort;
   return {
-    service: new AgentsService(db, safety, grants, webhook),
+    service: new AgentsService(db, safety, grants, webhook, events),
     db,
     agent,
     privateKey,
     apiKeys,
     grants,
+    events,
   };
 }
 
 describe('AgentsService verification', () => {
   it('verifies Ed25519 and stores only the API key hash', async () => {
-    const { service, privateKey, apiKeys, grants } = fixture();
+    const { service, privateKey, apiKeys, grants, events } = fixture();
     const subscription = await service.subscribe('user-1', {
       name: 'Test',
       slug: 'test-agent',
@@ -89,6 +94,13 @@ describe('AgentsService verification', () => {
     expect(apiKeys[0].keyHash).not.toContain(result.apiKey);
     expect(apiKeys[0].keyHash).toMatch(/^[a-f0-9]{64}$/);
     expect(grants.intents.size).toBe(1);
+    expect(events.publish).toHaveBeenCalledWith(
+      'agent.verified',
+      'agent-1',
+      expect.any(Object),
+      expect.any(Object),
+      'agent:agent-1:verified:endpoint',
+    );
   });
 
   it('rejects an incorrect signature', async () => {

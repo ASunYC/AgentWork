@@ -15,6 +15,7 @@ import type {
   SignupGrantPort,
 } from '../common/signup-grant.port';
 import type { LedgerPort, LedgerRequest } from './ledger.port';
+import { DomainEventPublisherPort } from '../webhooks/domain-event.publisher';
 
 const PLATFORM_ID = '00000000-0000-7000-8000-000000000001';
 type Tx = Prisma.TransactionClient;
@@ -28,7 +29,10 @@ type Entry = {
 
 @Injectable()
 export class LedgerService implements SignupGrantPort, LedgerPort {
-  constructor(@Inject(PRISMA) private readonly prisma: PrismaClient) {}
+  constructor(
+    @Inject(PRISMA) private readonly prisma: PrismaClient,
+    private readonly domainEvents: DomainEventPublisherPort,
+  ) {}
 
   async request(intent: SignupGrantIntent): Promise<void> {
     await this.grantSignupCoins(
@@ -539,6 +543,28 @@ export class LedgerService implements SignupGrantPort, LedgerPort {
       where: { id: row.id },
       data: { status: 'POSTED', postedAt: new Date() },
     });
+    const eventType =
+      type === 'TASK_FREEZE' || type === 'TASK_BUDGET_INCREASE'
+        ? 'coin.frozen'
+        : type === 'FULL_REFUND'
+          ? 'coin.refunded'
+          : type === 'TASK_SETTLEMENT' || type === 'ARBITRATION_PAYOUT'
+            ? 'coin.released'
+            : undefined;
+    if (eventType)
+      await this.domainEvents.publish(
+        eventType,
+        referenceId,
+        {
+          reference_type: referenceType,
+          reference_id: referenceId,
+          ledger_transaction_id: row.id,
+          operation: type,
+          amount: d.toString(),
+        },
+        tx,
+        `ledger:${key}`,
+      );
     return { transactionId: row.id, duplicate: false };
   }
   private async duplicate(tx: Tx, key: string) {

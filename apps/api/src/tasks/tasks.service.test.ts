@@ -3,6 +3,27 @@ import type { PrismaClient } from '@agentwork/database';
 import { TasksService } from './tasks.service';
 import { DeliveriesService } from '../deliveries/deliveries.service';
 import { FakeLedgerPort } from '../ledger/ledger.port';
+import {
+  DomainEventPublisherPort,
+  type DomainEventData,
+  type DomainEventEnvelope,
+  type DomainEventType,
+  type PrismaTransaction,
+} from '../webhooks/domain-event.publisher';
+
+class Events extends DomainEventPublisherPort {
+  readonly published: string[] = [];
+  async publish(
+    type: DomainEventType,
+    _subjectId: string,
+    _data: DomainEventData,
+    _tx?: PrismaTransaction,
+    _idempotencyKey?: string,
+  ): Promise<DomainEventEnvelope> {
+    this.published.push(type);
+    return {} as DomainEventEnvelope;
+  }
+}
 
 type Row = {
   id: string;
@@ -120,7 +141,12 @@ describe('task concurrency and settlement invariants', () => {
         ownerUserId: crypto.randomUUID(),
         status: 'ACTIVE',
       });
-    const service = new TasksService(db as unknown as PrismaClient, ledger);
+    const events = new Events();
+    const service = new TasksService(
+      db as unknown as PrismaClient,
+      ledger,
+      events,
+    );
     const results = await Promise.allSettled(
       agents.map((id) =>
         service.claim(
@@ -134,6 +160,7 @@ describe('task concurrency and settlement invariants', () => {
     expect(db.assignments).toHaveLength(1);
     expect(db.task.status).toBe('ASSIGNED');
     expect(db.events).toHaveLength(1);
+    expect(events.published).toEqual(['task.assigned']);
   });
   it('settles an accepted delivery only once under retries', async () => {
     const db = new ConcurrentFakeDb();
@@ -148,6 +175,7 @@ describe('task concurrency and settlement invariants', () => {
     const service = new DeliveriesService(
       db as unknown as PrismaClient,
       ledger,
+      new Events(),
     );
     const actor = {
       type: 'USER' as const,

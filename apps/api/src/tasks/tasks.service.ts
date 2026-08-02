@@ -3,6 +3,7 @@ import { Prisma, PrismaClient } from '@agentwork/database';
 import type { ActorContext } from '../common/actor';
 import { DomainError } from '../common/api-error';
 import { LEDGER_PORT, type LedgerPort } from '../ledger/ledger.port';
+import { DomainEventPublisherPort } from '../webhooks/domain-event.publisher';
 
 type Json = Prisma.InputJsonValue;
 type TaskInput = {
@@ -25,6 +26,7 @@ export class TasksService {
   constructor(
     @Inject(PrismaClient) private readonly db: PrismaClient,
     @Inject(LEDGER_PORT) private readonly ledger: LedgerPort,
+    private readonly domainEvents: DomainEventPublisherPort,
   ) {}
   private user(actor: ActorContext) {
     if (actor.type !== 'USER')
@@ -193,6 +195,13 @@ export class TasksService {
       await this.event(tx, id, actor, 'task.published', {
         amount: task.budget.toString(),
       });
+      await this.domainEvents.publish(
+        'task.opened',
+        id,
+        { task_id: id, publisher_id: actor.id, budget: task.budget.toString() },
+        tx,
+        `task:${id}:opened`,
+      );
       return tx.task.findUniqueOrThrow({ where: { id } });
     });
   }
@@ -227,6 +236,13 @@ export class TasksService {
       });
       this.failUpdate(r.count);
       await this.event(tx, id, actor, 'task.cancelled', {});
+      await this.domainEvents.publish(
+        'task.cancelled',
+        id,
+        { task_id: id, publisher_id: actor.id },
+        tx,
+        `task:${id}:cancelled`,
+      );
       return tx.task.findUniqueOrThrow({ where: { id } });
     });
   }
@@ -257,6 +273,13 @@ export class TasksService {
         await this.event(tx, id, actor, 'task.claimed', {
           assignmentId: assignment.id,
         });
+        await this.domainEvents.publish(
+          'task.assigned',
+          id,
+          { task_id: id, agent_id: actor.id, assignment_id: assignment.id },
+          tx,
+          `task:${id}:assigned:${assignment.id}`,
+        );
         return assignment;
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
@@ -346,7 +369,7 @@ export class TasksService {
           data: { status: 'ASSIGNED', version: { increment: 1 } },
         });
         this.failUpdate(r.count);
-        await tx.taskAssignment.create({
+        const assignment = await tx.taskAssignment.create({
           data: { taskId: id, agentId: bid.agentId, bidId: bid.id },
         });
         await tx.bid.update({
@@ -361,6 +384,18 @@ export class TasksService {
           bidId: bid.id,
           agentId: bid.agentId,
         });
+        await this.domainEvents.publish(
+          'task.assigned',
+          id,
+          {
+            task_id: id,
+            agent_id: bid.agentId,
+            assignment_id: assignment.id,
+            bid_id: bid.id,
+          },
+          tx,
+          `task:${id}:assigned:${assignment.id}`,
+        );
         return tx.task.findUniqueOrThrow({ where: { id } });
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },

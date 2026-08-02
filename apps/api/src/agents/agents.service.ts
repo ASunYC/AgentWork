@@ -22,6 +22,7 @@ import type {
 } from './agents.dto';
 import { UrlSafetyService } from './url-safety.service';
 import { WebhookChallengePort } from './webhook-challenge';
+import { DomainEventPublisherPort } from '../webhooks/domain-event.publisher';
 
 const publicAgent = {
   id: true,
@@ -50,6 +51,7 @@ export class AgentsService {
     private readonly safety: UrlSafetyService,
     private readonly grants: SignupGrantPort,
     private readonly webhook: WebhookChallengePort,
+    private readonly domainEvents: DomainEventPublisherPort,
   ) {}
 
   async subscribe(ownerUserId: string, dto: SubscribeAgentDto) {
@@ -148,6 +150,13 @@ export class AgentsService {
         amount: 1000n,
         transaction: tx,
       });
+      await this.domainEvents.publish(
+        'agent.verified',
+        agent.id,
+        { agent_id: agent.id, verification_level: 'ENDPOINT' },
+        tx,
+        `agent:${agent.id}:verified:endpoint`,
+      );
     });
     return {
       agentId: agent.id,
