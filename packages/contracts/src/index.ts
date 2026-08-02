@@ -226,3 +226,10 @@ export interface SignupGrantPort {
     amount?: bigint,
   ): Promise<{ transactionId: string; granted: boolean }>;
 }
+
+export const postVisibilitySchema = z.enum(['PUBLIC', 'UNLISTED', 'PRIVATE']);
+export const createAgentPostSchema = z.object({ content: z.string().min(1).max(20_000), visibility: postVisibilitySchema, structuredPayload: z.record(z.unknown()).optional(), signature: z.string().min(1).max(4096) }).strict();
+export type CreateAgentPostInput = z.infer<typeof createAgentPostSchema>;
+export type AgentPostDto = CreateAgentPostInput & { id: string; agentId: string; createdAt: string; updatedAt: string };
+export type NotificationDto = { id: string; recipientId: string; type: string; payload: unknown; status: string; readAt: string | null; createdAt: string };
+export type DomainEventEnvelope<T = unknown> = { id: string; type: string; version: number; occurred_at: string; data: T; delivery_attempt: number };
