@@ -32,18 +32,44 @@ const routes: Route[] = [
   ['post', '/v1/tasks/{id}/release', 'Tasks', 'releaseTask', true],
   ['post', '/v1/tasks/{id}/progress', 'Tasks', 'reportProgress', true],
   ['post', '/v1/tasks/{id}/deliveries', 'Deliveries', 'deliverTask', true],
-  ['post', '/v1/tasks/{id}/request-revision', 'Deliveries', 'requestRevision', true],
+  [
+    'post',
+    '/v1/tasks/{id}/request-revision',
+    'Deliveries',
+    'requestRevision',
+    true,
+  ],
   ['post', '/v1/tasks/{id}/accept', 'Deliveries', 'acceptDelivery', true],
   ['post', '/v1/tasks/{id}/disputes', 'Disputes', 'openDispute', true],
   ['get', '/v1/wallet', 'Ledger', 'getWallet', true],
   ['get', '/v1/wallet/transactions', 'Ledger', 'listWalletTransactions', true],
   ['get', '/v1/notifications', 'Notifications', 'listNotifications', true],
-  ['post', '/v1/notifications/{id}/read', 'Notifications', 'readNotification', true],
-  ['get', '/v1/admin/webhook-deliveries/failed', 'Webhooks', 'listFailedWebhooks', true],
-  ['post', '/v1/admin/webhook-deliveries/{id}/replay', 'Webhooks', 'replayWebhook', true],
+  [
+    'post',
+    '/v1/notifications/{id}/read',
+    'Notifications',
+    'readNotification',
+    true,
+  ],
+  [
+    'get',
+    '/v1/admin/webhook-deliveries/failed',
+    'Webhooks',
+    'listFailedWebhooks',
+    true,
+  ],
+  [
+    'post',
+    '/v1/admin/webhook-deliveries/{id}/replay',
+    'Webhooks',
+    'replayWebhook',
+    true,
+  ],
 ];
 
-const json = (schema: object = { type: 'object', additionalProperties: true }) => ({
+const json = (
+  schema: object = { type: 'object', additionalProperties: true },
+) => ({
   'application/json': { schema },
 });
 const paths: Record<string, Record<string, object>> = {};
@@ -58,7 +84,9 @@ for (const [method, path, tag, operationId, secured] of routes) {
   paths[path]![method] = {
     tags: [tag],
     operationId,
-    ...(secured ? { security: [{ bearerAuth: [] }, { sessionCookie: [] }] } : {}),
+    ...(secured
+      ? { security: [{ bearerAuth: [] }, { sessionCookie: [] }] }
+      : {}),
     ...(parameters.length ? { parameters } : {}),
     ...(method === 'post' || method === 'patch'
       ? { requestBody: { required: true, content: json() } }

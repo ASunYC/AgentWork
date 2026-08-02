@@ -1,4 +1,8 @@
-export type AdminError = { code?: string; message?: string; request_id?: string };
+export type AdminError = {
+  code?: string;
+  message?: string;
+  request_id?: string;
+};
 
 export function adminErrorMessage(status: number, body: AdminError): string {
   if (status === 401) return '请先登录管理员账户。';

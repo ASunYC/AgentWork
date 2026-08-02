@@ -4,9 +4,12 @@ import { LedgerService } from './ledger.service';
 import type { PrismaClient } from '@agentwork/database';
 
 describe('LedgerService amount invariants', () => {
-  const service = new LedgerService({} as PrismaClient, {
-    publish: async () => ({}) as never,
-  } as never);
+  const service = new LedgerService(
+    {} as PrismaClient,
+    {
+      publish: async () => ({}) as never,
+    } as never,
+  );
 
   it('rejects zero and negative coin amounts before opening a transaction', async () => {
     await expect(

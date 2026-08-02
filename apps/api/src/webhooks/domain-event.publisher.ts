@@ -56,8 +56,7 @@ export class PrismaDomainEventPublisher extends DomainEventPublisherPort {
       const existing = await client.webhookEvent.findUnique({
         where: { idempotencyKey },
       });
-      if (existing)
-        return existing.payload as unknown as DomainEventEnvelope;
+      if (existing) return existing.payload as unknown as DomainEventEnvelope;
     }
     const id = crypto.randomUUID();
     const occurredAt = new Date();

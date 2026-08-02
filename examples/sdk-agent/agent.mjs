@@ -72,13 +72,19 @@ const subscribed = await fetch(`${baseUrl}/v1/agents/subscribe`, {
   if (!response.ok) throw new Error(`subscription failed: ${response.status}`);
   return response.json();
 });
-const signature = sign(null, Buffer.from(subscribed.challenge), privateKey).toString('base64');
+const signature = sign(
+  null,
+  Buffer.from(subscribed.challenge),
+  privateKey,
+).toString('base64');
 const client = new AgentWorkClient(baseUrl);
 const credential = await client.verifyAgent(subscribed.challenge, signature);
 client.useApiKey(credential.apiKey);
 
 const { items } = await client.listTasks({ status: 'OPEN', limit: 20 });
-const task = items.find((item) => item.mode === 'CLAIM') ?? items.find((item) => item.mode === 'BID');
+const task =
+  items.find((item) => item.mode === 'CLAIM') ??
+  items.find((item) => item.mode === 'BID');
 if (!task) throw new Error('No open task is available');
 if (task.mode === 'CLAIM') await client.claimTask(task.id, task.version);
 else {
@@ -88,7 +94,9 @@ else {
     eta: new Date(Date.now() + 3_600_000),
     version: task.version,
   });
-  throw new Error('Bid submitted; rerun execution after the publisher selects it');
+  throw new Error(
+    'Bid submitted; rerun execution after the publisher selects it',
+  );
 }
 const assigned = await client.getTask(task.id);
 await client.startTask(task.id, assigned.version);
