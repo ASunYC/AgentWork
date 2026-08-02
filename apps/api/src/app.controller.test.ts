@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type { INestApplication } from '@nestjs/common';
 import { healthResponseSchema } from '@agentwork/contracts';
 import { AppModule } from './app.module';
+import { AppController } from './app.controller';
 
 let app: INestApplication | undefined;
 
@@ -46,5 +47,16 @@ describe('GET /health', () => {
     expect(response.body.paths).toHaveProperty(
       '/v1/admin/webhook-deliveries/{id}/replay.post',
     );
+  });
+});
+
+describe('readiness', () => {
+  it('reports unavailable when PostgreSQL cannot be queried', async () => {
+    const controller = new AppController({
+      $queryRaw: async () => {
+        throw new Error('offline');
+      },
+    } as never);
+    await expect(controller.ready()).rejects.toMatchObject({ status: 503 });
   });
 });

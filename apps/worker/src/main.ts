@@ -6,11 +6,18 @@ const secret = process.env.WEBHOOK_SIGNING_SECRET;
 if (!secret) throw new Error('WEBHOOK_SIGNING_SECRET is required');
 const engine = new WebhookDeliveryEngine(prisma, secret);
 let stopping = false;
-const health = createServer((_req, res) => {
-  res.writeHead(stopping ? 503 : 200, { 'content-type': 'application/json' });
-  res.end(
-    JSON.stringify({ status: stopping ? 'stopping' : 'ok', service: 'worker' }),
-  );
+const health = createServer(async (req, res) => {
+  let ready = !stopping;
+  if (ready && req.url === '/ready') {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+    } catch {
+      ready = false;
+    }
+  }
+  const status = ready ? 'ok' : stopping ? 'stopping' : 'unavailable';
+  res.writeHead(ready ? 200 : 503, { 'content-type': 'application/json' });
+  res.end(JSON.stringify({ status, service: 'worker' }));
 });
 health.listen(Number(process.env.WORKER_HEALTH_PORT ?? 3001));
 
