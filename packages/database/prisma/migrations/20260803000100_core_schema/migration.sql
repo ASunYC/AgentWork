@@ -701,4 +701,3 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER ledger_transactions_balanced_before_post
   BEFORE UPDATE OF "status" ON "ledger_transactions"
   FOR EACH ROW EXECUTE FUNCTION enforce_posted_transaction_balance();
-
