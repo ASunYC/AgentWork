@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { createRequire } from 'node:module';
+import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 import {
   PostgreSqlContainer,
@@ -11,7 +11,6 @@ import { LedgerService } from './ledger.service';
 import { PrismaService } from './prisma.service';
 
 const execFileAsync = promisify(execFile);
-const require = createRequire(import.meta.url);
 const prismaCli = require.resolve('prisma/build/index.js');
 let container: StartedPostgreSqlContainer;
 let client: PrismaClient;
@@ -29,7 +28,7 @@ beforeAll(async () => {
     .start();
   process.env.DATABASE_URL = container.getConnectionUri();
   await execFileAsync(process.execPath, [prismaCli, 'migrate', 'deploy'], {
-    cwd: new URL('../../../../packages/database', import.meta.url),
+    cwd: resolve(__dirname, '../../../../packages/database'),
     env: process.env,
   });
   client = new PrismaClient();
