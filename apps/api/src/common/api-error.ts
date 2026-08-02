@@ -33,11 +33,29 @@ export class ApiExceptionFilter implements ExceptionFilter {
       error instanceof ApiError
         ? { code: error.code, message: error.message, details: error.details }
         : {
-            code: status === 400 ? 'VALIDATION_ERROR' : 'INTERNAL_ERROR',
+            code:
+              status === 400
+                ? 'VALIDATION_ERROR'
+                : status === 401
+                  ? 'UNAUTHORIZED'
+                  : status === 403
+                    ? 'FORBIDDEN'
+                    : status === 404
+                      ? 'NOT_FOUND'
+                      : status === 409
+                        ? 'CONFLICT'
+                        : status >= 500
+                          ? 'INTERNAL_ERROR'
+                          : 'HTTP_ERROR',
             message:
               error instanceof HttpException
                 ? String(error.message)
                 : 'Internal server error',
+            details:
+              error instanceof HttpException &&
+              typeof error.getResponse() === 'object'
+                ? error.getResponse()
+                : undefined,
           };
     response.status(status).json({
       ...payload,
