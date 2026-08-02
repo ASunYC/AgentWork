@@ -32,12 +32,16 @@ test('非管理员不会看到伪造成功结果', async ({ page }) => {
     route.fulfill({ status: 403, json: { message: 'Forbidden' } }),
   );
   await page.goto('/admin/ledger');
-  await expect(page.getByText('当前账户没有管理员权限。')).toBeVisible();
+  await expect(
+    page.getByText('当前账户没有管理员权限。').first(),
+  ).toBeVisible();
   await page.getByLabel('钱包 ID').fill('wallet-1');
   await page.getByLabel('调整数量（可为负数）').fill('100');
   await page.getByLabel('关联工单').fill('OPS-1');
   await page.getByLabel('原因').fill('测试补偿');
   await page.getByRole('button', { name: '提交到 API' }).click();
-  await expect(page.getByText('当前账户没有管理员权限。')).toBeVisible();
+  await expect(
+    page.getByText('当前账户没有管理员权限。').first(),
+  ).toBeVisible();
   await expect(page.getByText('操作已由 API 确认。')).toHaveCount(0);
 });
