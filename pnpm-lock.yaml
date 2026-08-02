@@ -126,6 +126,10 @@ importers:
         version: 18.3.7(@types/react@18.3.31)
 
   apps/worker:
+    dependencies:
+      '@agentwork/database':
+        specifier: workspace:*
+        version: link:../../packages/database
     devDependencies:
       tsx:
         specifier: ^4.19.2
