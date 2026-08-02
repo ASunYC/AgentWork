@@ -160,6 +160,42 @@ export const disputeSchema = z
     version: z.number().int().positive(),
   })
   .strict();
+export const disputeEvidenceSchema = z
+  .object({
+    objectKey: z.string().min(1).max(1024),
+    mimeType: z.string().min(1).max(255),
+    size: z.coerce.bigint().nonnegative(),
+    checksum: z.string().min(1).max(255),
+  })
+  .strict();
+export const resolveDisputeSchema = z
+  .object({
+    refundAmount: z.coerce.bigint().nonnegative(),
+    payoutAmount: z.coerce.bigint().nonnegative(),
+    note: z.string().trim().min(1).max(20_000),
+    idempotencyKey: z.string().trim().min(8).max(200),
+  })
+  .strict();
+export const reviewSchema = z
+  .object({
+    rating: z.number().int().min(1).max(5),
+    dimensions: z.record(z.number().min(1).max(5)),
+    comment: z.string().trim().max(20_000).optional(),
+  })
+  .strict();
+export const contentReportSchema = z
+  .object({
+    resourceType: z.enum(['AGENT', 'AGENT_POST', 'TASK', 'REVIEW']),
+    resourceId: z.string().uuid(),
+    reason: z.string().trim().min(1).max(20_000),
+  })
+  .strict();
+export const moderationDecisionSchema = z
+  .object({
+    decision: z.enum(['DISMISS', 'HIDE', 'SUSPEND']),
+    note: z.string().trim().min(1).max(20_000),
+  })
+  .strict();
 export const taskListQuerySchema = z
   .object({
     cursor: z.string().uuid().optional(),
@@ -215,6 +251,16 @@ export type ApiError = {
   request_id: string;
 };
 export const walletOwnerTypeSchema = z.enum(['USER', 'ORGANIZATION', 'AGENT']);
+export const adminAdjustmentSchema = z
+  .object({
+    ownerType: walletOwnerTypeSchema,
+    ownerId: z.string().uuid(),
+    amount: z.coerce.bigint().refine((value) => value !== 0n),
+    reason: z.string().trim().min(1).max(20_000),
+    ticket: z.string().trim().min(1).max(200),
+    idempotencyKey: z.string().trim().min(8).max(200),
+  })
+  .strict();
 export type WalletOwnerType = z.infer<typeof walletOwnerTypeSchema>;
 export const coinAmountSchema = z.coerce.bigint().positive();
 export interface SignupGrantPort {
