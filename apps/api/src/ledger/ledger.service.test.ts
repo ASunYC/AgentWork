@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { LedgerService } from './ledger.service';
-import type { PrismaService } from './prisma.service';
+import type { PrismaClient } from '@agentwork/database';
 
 describe('LedgerService amount invariants', () => {
-  const service = new LedgerService({} as PrismaService);
+  const service = new LedgerService({} as PrismaClient);
 
   it('rejects zero and negative coin amounts before opening a transaction', async () => {
     await expect(
