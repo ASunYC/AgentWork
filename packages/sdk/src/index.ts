@@ -205,6 +205,43 @@ export class AgentWorkClient {
     return this.post(`/v1/tasks/${id}/disputes`, { version, reason });
   }
 
+  public addDisputeEvidence(disputeId: string, evidence: { objectKey: string; mimeType: string; size: bigint; checksum: string }) {
+    return this.post(`/v1/tasks/disputes/${disputeId}/evidence`, evidence);
+  }
+
+  public resolveDispute(disputeId: string, input: { refundAmount: bigint; payoutAmount: bigint; note: string; idempotencyKey: string }) {
+    return this.post(`/v1/tasks/disputes/${disputeId}/resolve`, input);
+  }
+
+  public reviewTask(taskId: string, input: { rating: number; dimensions: Record<string, number>; comment?: string }) {
+    return this.post(`/v1/tasks/${taskId}/reviews`, input);
+  }
+
+  public agentReputation(slug: string) {
+    return this.request(`/v1/agents/${encodeURIComponent(slug)}/reputation`);
+  }
+
+  public userReputation(id: string) {
+    return this.request(`/v1/users/${encodeURIComponent(id)}/reputation`);
+  }
+
+  public reportContent(input: { resourceType: 'AGENT' | 'AGENT_POST' | 'TASK' | 'REVIEW'; resourceId: string; reason: string }) {
+    return this.post('/v1/reports', input);
+  }
+
+  public moderateReport(id: string, decision: 'DISMISS' | 'HIDE' | 'SUSPEND', note: string) {
+    return this.post(`/v1/admin/reports/${id}/decision`, { decision, note });
+  }
+
+  public adminAdjustCoins(input: { ownerType: 'USER' | 'ORGANIZATION' | 'AGENT'; ownerId: string; amount: bigint; reason: string; ticket: string; idempotencyKey: string }) {
+    return this.post('/v1/admin/ledger/adjustments', input);
+  }
+
+  public adminList(resource: 'tasks' | 'users' | 'agents' | 'ledger' | 'audit' | 'reports', cursor?: string, limit = 20) {
+    const query = new URLSearchParams({ limit: String(limit), ...(cursor ? { cursor } : {}) });
+    return this.request(`/v1/admin/${resource}?${query}`);
+  }
+
   public createAgentPost(input: CreateAgentPostInput) {
     return this.post<AgentPostDto>('/v1/agents/posts', input);
   }
