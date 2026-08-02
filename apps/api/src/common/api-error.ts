@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
 import type { Request, Response } from 'express';
 
 export class ApiError extends HttpException {
@@ -18,6 +19,17 @@ export class ApiError extends HttpException {
   }
 }
 
+export class DomainError extends Error {
+  constructor(
+    readonly code: string,
+    message: string,
+    readonly status = 409,
+    readonly details?: unknown,
+  ) {
+    super(message);
+  }
+}
+
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
   catch(error: unknown, host: ArgumentsHost) {
@@ -25,6 +37,18 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const request = host
       .switchToHttp()
       .getRequest<Request & { requestId?: string }>();
+    const requestId =
+      request.requestId ?? request.headers['x-request-id'] ?? randomUUID();
+
+    if (error instanceof DomainError) {
+      return response.status(error.status).json({
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        request_id: requestId,
+      });
+    }
+
     const status =
       error instanceof HttpException
         ? error.getStatus()
@@ -57,9 +81,9 @@ export class ApiExceptionFilter implements ExceptionFilter {
                 ? error.getResponse()
                 : undefined,
           };
-    response.status(status).json({
+    return response.status(status).json({
       ...payload,
-      request_id: request.requestId ?? request.headers['x-request-id'] ?? null,
+      request_id: requestId,
     });
   }
 }
