@@ -7,9 +7,16 @@ import { ApiExceptionFilter } from './common/api-error';
 import { BigIntInterceptor } from './common/bigint.interceptor';
 import { DatabaseModule } from './database.module';
 import { TasksModule } from './tasks/tasks.module';
+import { LedgerModule } from './ledger/ledger.module';
 
 @Module({
-  imports: [DatabaseModule, IdentityModule, AgentsModule, TasksModule],
+  imports: [
+    DatabaseModule,
+    IdentityModule,
+    AgentsModule,
+    LedgerModule,
+    TasksModule,
+  ],
   controllers: [AppController],
   providers: [
     { provide: APP_FILTER, useClass: ApiExceptionFilter },
