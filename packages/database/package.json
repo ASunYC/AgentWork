@@ -6,13 +6,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "pnpm generate && tsc -p tsconfig.json",
     "generate": "prisma generate",
     "migrate:deploy": "prisma migrate deploy",
     "seed": "prisma db seed",
-    "test": "vitest run --config vitest.config.ts",
+    "test": "pnpm generate && vitest run --config vitest.config.ts",
     "validate": "cross-env DATABASE_URL=postgresql://agentwork:agentwork@localhost:5432/agentwork prisma validate",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "pnpm generate && tsc -p tsconfig.json --noEmit"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
