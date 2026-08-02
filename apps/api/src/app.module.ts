@@ -14,6 +14,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ReputationModule } from './reputation/reputation.module';
+import { OperationsModule } from './operations/operations.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ReputationModule } from './reputation/reputation.module';
     MessagingModule,
     NotificationsModule,
     ReputationModule,
+    OperationsModule,
   ],
   controllers: [AppController],
   providers: [
