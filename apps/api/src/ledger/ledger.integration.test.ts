@@ -335,6 +335,11 @@ describe.sequential('LedgerService PostgreSQL integration', () => {
     await service.resolveDispute(taskId, publisherId, agentId, 250n, 350n, {
       idempotencyKey: `dispute:${taskId}`,
     });
+    expect(
+      await client.webhookEvent.count({
+        where: { subjectId: taskId, eventType: 'dispute.resolved' },
+      }),
+    ).toBe(1);
     expect(await balance('USER', publisherId)).toMatchObject({
       available: '650',
       frozen: '0',

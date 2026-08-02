@@ -280,39 +280,62 @@ export class LedgerService implements SignupGrantPort, LedgerPort {
     const total = refundAmount + payoutAmount;
     if (refundAmount < 0n || payoutAmount < 0n || total <= 0n)
       throw new LedgerError('INVALID_AMOUNT', 'Invalid dispute split');
-    return this.release(taskId, total, context, async (tx, entries) => {
-      if (refundAmount) {
-        const w = await this.lockWallet(tx, 'USER', publisherId);
-        entries.push({
-          accountId: (await this.account(tx, w.id, 'AVAILABLE')).id,
-          direction: 'CREDIT',
-          amount: refundAmount,
-        });
-      }
-      if (payoutAmount) {
-        const w = await this.ensureWallet(tx, {
-          ownerType: 'AGENT',
-          ownerId: agentId,
-        });
-        entries.push({
-          accountId: (await this.account(tx, w.id, 'AVAILABLE')).id,
-          direction: 'CREDIT',
-          amount: payoutAmount,
-        });
-      }
-      return this.post(
-        tx,
-        'ARBITRATION_PAYOUT',
-        'task',
+    return this.inTransaction(transaction, async (tx) => {
+      const result = await this.release(
         taskId,
-        context.idempotencyKey,
-        entries,
-        {
-          refundAmount: refundAmount.toString(),
-          payoutAmount: payoutAmount.toString(),
+        total,
+        context,
+        async (releaseTx, entries) => {
+          if (refundAmount) {
+            const w = await this.lockWallet(releaseTx, 'USER', publisherId);
+            entries.push({
+              accountId: (await this.account(releaseTx, w.id, 'AVAILABLE')).id,
+              direction: 'CREDIT',
+              amount: refundAmount,
+            });
+          }
+          if (payoutAmount) {
+            const w = await this.ensureWallet(releaseTx, {
+              ownerType: 'AGENT',
+              ownerId: agentId,
+            });
+            entries.push({
+              accountId: (await this.account(releaseTx, w.id, 'AVAILABLE')).id,
+              direction: 'CREDIT',
+              amount: payoutAmount,
+            });
+          }
+          return this.post(
+            releaseTx,
+            'ARBITRATION_PAYOUT',
+            'task',
+            taskId,
+            context.idempotencyKey,
+            entries,
+            {
+              refundAmount: refundAmount.toString(),
+              payoutAmount: payoutAmount.toString(),
+            },
+          );
         },
+        tx,
       );
-    }, transaction);
+      await this.domainEvents.publish(
+        'dispute.resolved',
+        taskId,
+        {
+          task_id: taskId,
+          publisher_id: publisherId,
+          agent_id: agentId,
+          refund_amount: refundAmount.toString(),
+          payout_amount: payoutAmount.toString(),
+          ledger_transaction_id: result.transactionId,
+        },
+        tx,
+        `dispute:${taskId}:resolved:${context.idempotencyKey}`,
+      );
+      return result;
+    });
   }
 
   async adminAdjust(
