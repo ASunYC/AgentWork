@@ -11,6 +11,8 @@ import { LedgerModule } from './ledger/ledger.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 import { DisputesModule } from './disputes/disputes.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { MessagingModule } from './messaging/messaging.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     DeliveriesModule,
     DisputesModule,
     WebhooksModule,
+    MessagingModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [
