@@ -20,7 +20,7 @@ class IdempotentGrantFake extends SignupGrantPort {
 
 function database() {
   const users = new Map<string, any>();
-  const db = {
+  const db: any = {
     users,
     user: {
       create: vi.fn(async ({ data }: any) => {
