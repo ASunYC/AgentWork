@@ -10,6 +10,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { DeliveriesModule } from './deliveries/deliveries.module';
 import { DisputesModule } from './disputes/disputes.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { DisputesModule } from './disputes/disputes.module';
     TasksModule,
     DeliveriesModule,
     DisputesModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [
