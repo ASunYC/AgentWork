@@ -1,18 +1,21 @@
 # Ledger integration contract
 
-`LedgerService` is the only supported write boundary. Tasks calls freeze, increase,
-settle, refund, or dispute methods inside its application flow and supplies a stable
-idempotency key. Identity and Agents depend on the exported `SignupGrantPort` from
-`@agentwork/contracts`; they call it after persisting an owner and pass the stable
-anti-abuse fingerprint. A repeated owner or fingerprint returns the original grant
-without issuing more coins.
+`LedgerService` is the only supported write boundary. `LedgerModule` exports the
+real `LEDGER_PORT` and `SignupGrantPort`; no unconfigured production provider exists.
+Identity and Agents persist their principal and issue the 1000-coin signup grant in
+the same PostgreSQL transaction. A repeated owner or fingerprint returns the original
+grant without issuing more coins.
 
 All amounts are positive `bigint` coin units (except signed administrator adjustments).
-Writes use serializable database transactions, balanced immutable entries, and no
-balance column. Available and frozen balances are projections over posted entries.
-The HTTP wallet routes currently receive the authenticated subject through
-`x-owner-type` and `x-owner-id`; the future auth guard must populate these values from
-verified credentials, never accept them directly from an untrusted edge request.
+Writes use serializable database transactions when called independently. Task publish,
+cancel, and acceptance pass their existing `Prisma.TransactionClient`, so the ledger
+entry, task state, task event, and assignment checks commit or roll back together.
+Available and frozen balances are projections over balanced immutable entries; there
+is no mutable balance column.
+
+The API has one global database module backed by the package singleton. Both the
+`PRISMA` token and `PrismaClient` resolve to that same object, while tests may override
+either provider in a Nest testing module.
 
 Administrator adjustment and reversal are service methods intended for an internal
 admin controller guarded by the platform authorization module. No deposit, withdrawal,
