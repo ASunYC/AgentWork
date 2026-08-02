@@ -124,7 +124,7 @@ export class AgentWorkClient {
         .filter(
           (entry): entry is [string, string | number] => entry[1] !== undefined,
         )
-        .map(([key, value]) => [key, String(value)]),
+        .map(([key, value]) => [key, String(value)] as [string, string]),
     );
     return this.request<{ items: TaskDto[]; nextCursor: string | null }>(
       `/v1/tasks?${params}`,
