@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "nest build",
+    "build": "pnpm prepare:deps && nest build",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "prepare:deps": "pnpm --filter @agentwork/contracts build && pnpm --filter @agentwork/database build",
+    "typecheck": "pnpm prepare:deps && tsc -p tsconfig.json --noEmit",
+    "test": "pnpm prepare:deps && vitest run"
   },
   "dependencies": {
     "@agentwork/contracts": "workspace:*",
