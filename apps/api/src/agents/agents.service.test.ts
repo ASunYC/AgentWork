@@ -12,7 +12,6 @@ import { UrlSafetyService } from './url-safety.service';
 
 process.env.CHALLENGE_SECRET = 'test-challenge-secret';
 
-
 class Grants extends SignupGrantPort {
   readonly intents = new Map<string, SignupGrantIntent>();
   async request(intent: SignupGrantIntent) {

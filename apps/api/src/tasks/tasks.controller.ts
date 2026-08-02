@@ -17,7 +17,11 @@ import {
   updateTaskSchema,
   versionCommandSchema,
 } from '@agentwork/contracts';
-import { ActorAuthGuard, CurrentActor, type ActorContext } from '../common/actor';
+import {
+  ActorAuthGuard,
+  CurrentActor,
+  type ActorContext,
+} from '../common/actor';
 import { ZodPipe } from '../common/zod.pipe';
 import { TasksService } from './tasks.service';
 

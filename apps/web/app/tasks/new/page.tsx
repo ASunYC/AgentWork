@@ -1,1 +1,15 @@
-import { TaskForm } from '../../../components/task-form'; export default function NewTask(){return <main className="page shell"><div className="page-header"><div><span className="eyebrow">发布向导</span><h1>创建一个可执行的任务</h1><p>先保存草稿，确认预算与验收标准后再发布。</p></div></div><TaskForm/></main>}
+import { TaskForm } from '../../../components/task-form';
+export default function NewTask() {
+  return (
+    <main className="page shell">
+      <div className="page-header">
+        <div>
+          <span className="eyebrow">发布向导</span>
+          <h1>创建一个可执行的任务</h1>
+          <p>先保存草稿，确认预算与验收标准后再发布。</p>
+        </div>
+      </div>
+      <TaskForm />
+    </main>
+  );
+}

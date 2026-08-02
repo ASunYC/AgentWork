@@ -44,60 +44,129 @@ afterAll(async () => {
 describe.sequential('LedgerService PostgreSQL integration', () => {
   it('runs the complete task lifecycle with task state and coins in one transaction', async () => {
     const user = await client.user.create({
-      data: { email: `${crypto.randomUUID()}@example.test`, passwordHash: 'test', status: 'ACTIVE' },
+      data: {
+        email: `${crypto.randomUUID()}@example.test`,
+        passwordHash: 'test',
+        status: 'ACTIVE',
+      },
     });
     const agentOwner = await client.user.create({
-      data: { email: `${crypto.randomUUID()}@example.test`, passwordHash: 'test', status: 'ACTIVE' },
+      data: {
+        email: `${crypto.randomUUID()}@example.test`,
+        passwordHash: 'test',
+        status: 'ACTIVE',
+      },
     });
     const agent = await client.agent.create({
-      data: { ownerUserId: agentOwner.id, slug: `agent-${crypto.randomUUID()}`, name: 'E2E Agent', manifestVersion: '1', status: 'ACTIVE' },
+      data: {
+        ownerUserId: agentOwner.id,
+        slug: `agent-${crypto.randomUUID()}`,
+        name: 'E2E Agent',
+        manifestVersion: '1',
+        status: 'ACTIVE',
+      },
     });
     await service.grantSignupCoins('USER', user.id, `user:${user.id}`);
     await service.grantSignupCoins('AGENT', agent.id, `agent:${agent.id}`);
     const tasks = new TasksService(client, service);
     const deliveries = new DeliveriesService(client, service);
-    const human = { type: 'USER' as const, id: user.id, requestId: crypto.randomUUID() };
-    const machine = { type: 'AGENT' as const, id: agent.id, requestId: crypto.randomUUID() };
+    const human = {
+      type: 'USER' as const,
+      id: user.id,
+      requestId: crypto.randomUUID(),
+    };
+    const machine = {
+      type: 'AGENT' as const,
+      id: agent.id,
+      requestId: crypto.randomUUID(),
+    };
     const task = await tasks.create(human, {
-      title: 'E2E', objective: 'prove atomic settlement', mode: 'CLAIM', budget: 100n,
-      deliverables: {}, acceptanceCriteria: {}, capabilities: [],
+      title: 'E2E',
+      objective: 'prove atomic settlement',
+      mode: 'CLAIM',
+      budget: 100n,
+      deliverables: {},
+      acceptanceCriteria: {},
+      capabilities: [],
     });
     await tasks.publish(human, task.id, { version: 1 });
     await tasks.claim(machine, task.id, { version: 2 });
     await tasks.transitionAgent(machine, task.id, 3, 'start');
     await deliveries.deliver(machine, task.id, {
-      summary: 'done', attachments: [], version: 4,
+      summary: 'done',
+      attachments: [],
+      version: 4,
     });
     await deliveries.accept(human, task.id, { version: 5 });
     await deliveries.accept(human, task.id, { version: 5 });
-    expect(await balance('USER', user.id)).toMatchObject({ available: '900', frozen: '0' });
-    expect(await balance('AGENT', agent.id)).toMatchObject({ available: '1100', frozen: '0' });
-    expect((await client.task.findUniqueOrThrow({ where: { id: task.id } })).status).toBe('COMPLETED_SETTLED');
+    expect(await balance('USER', user.id)).toMatchObject({
+      available: '900',
+      frozen: '0',
+    });
+    expect(await balance('AGENT', agent.id)).toMatchObject({
+      available: '1100',
+      frozen: '0',
+    });
+    expect(
+      (await client.task.findUniqueOrThrow({ where: { id: task.id } })).status,
+    ).toBe('COMPLETED_SETTLED');
   });
 
   it('rolls ledger writes back when the surrounding task transaction fails', async () => {
     const publisherId = crypto.randomUUID();
     const taskId = crypto.randomUUID();
-    await service.grantSignupCoins('USER', publisherId, `rollback:${publisherId}`);
-    await expect(client.$transaction(async (tx) => {
-      await service.freeze({ taskId, publisherId, amount: 100n, idempotencyKey: `rollback:${taskId}`, transaction: tx });
-      throw new Error('forced task update failure');
-    })).rejects.toThrow('forced task update failure');
-    expect(await balance('USER', publisherId)).toMatchObject({ available: '1000', frozen: '0' });
+    await service.grantSignupCoins(
+      'USER',
+      publisherId,
+      `rollback:${publisherId}`,
+    );
+    await expect(
+      client.$transaction(async (tx) => {
+        await service.freeze({
+          taskId,
+          publisherId,
+          amount: 100n,
+          idempotencyKey: `rollback:${taskId}`,
+          transaction: tx,
+        });
+        throw new Error('forced task update failure');
+      }),
+    ).rejects.toThrow('forced task update failure');
+    expect(await balance('USER', publisherId)).toMatchObject({
+      available: '1000',
+      frozen: '0',
+    });
   });
 
   it('keeps task state unchanged when the ledger operation fails', async () => {
     const user = await client.user.create({
-      data: { email: `${crypto.randomUUID()}@example.test`, passwordHash: 'test', status: 'ACTIVE' },
+      data: {
+        email: `${crypto.randomUUID()}@example.test`,
+        passwordHash: 'test',
+        status: 'ACTIVE',
+      },
     });
     const tasks = new TasksService(client, service);
-    const human = { type: 'USER' as const, id: user.id, requestId: crypto.randomUUID() };
+    const human = {
+      type: 'USER' as const,
+      id: user.id,
+      requestId: crypto.randomUUID(),
+    };
     const task = await tasks.create(human, {
-      title: 'No funds', objective: 'must stay draft', mode: 'CLAIM', budget: 100n,
-      deliverables: {}, acceptanceCriteria: {}, capabilities: [],
+      title: 'No funds',
+      objective: 'must stay draft',
+      mode: 'CLAIM',
+      budget: 100n,
+      deliverables: {},
+      acceptanceCriteria: {},
+      capabilities: [],
     });
-    await expect(tasks.publish(human, task.id, { version: 1 })).rejects.toMatchObject({ code: 'WALLET_NOT_FOUND' });
-    expect(await client.task.findUniqueOrThrow({ where: { id: task.id } })).toMatchObject({ status: 'DRAFT', version: 1 });
+    await expect(
+      tasks.publish(human, task.id, { version: 1 }),
+    ).rejects.toMatchObject({ code: 'WALLET_NOT_FOUND' });
+    expect(
+      await client.task.findUniqueOrThrow({ where: { id: task.id } }),
+    ).toMatchObject({ status: 'DRAFT', version: 1 });
   });
   it('grants signup coins once for repeated owner and fingerprint', async () => {
     const ownerId = crypto.randomUUID();

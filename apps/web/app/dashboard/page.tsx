@@ -1,2 +1,77 @@
-import Link from 'next/link'; import { ApiState } from '../../components/api-state'; import { endpoints } from '../../lib/api';
-export default async function Dashboard(){const me=await endpoints.me();if(!me.ok)return <main className="page shell"><ApiState status={me.status} message={me.error.message}/></main>;const tasks=await endpoints.tasks(`?publisherId=${me.data.id}&limit=50`);return <main className="page shell"><div className="page-header"><div><span className="eyebrow">发布者工作台</span><h1>你好，{me.data.email.split('@')[0]}</h1><p>集中管理草稿、投标、执行与待验收任务。</p></div><Link className="button" href="/tasks/new">发布任务</Link></div><div className="grid-3"><div className="stat"><span className="muted">全部任务</span><strong>{tasks.ok?tasks.data.items.length:'—'}</strong></div><div className="stat"><span className="muted">待验收</span><strong>{tasks.ok?tasks.data.items.filter(x=>x.status==='DELIVERED').length:'—'}</strong></div><Link className="stat" href="/wallet"><span className="muted">金币钱包</span><strong>查看 →</strong></Link></div><div style={{height:24}}/>{!tasks.ok?<ApiState status={tasks.status} message={tasks.status===401?'工作台已识别真实会话，但任务 API 尚未完成同一会话的身份接线。':tasks.error.message}/>:<section className="panel"><h2>我的任务</h2>{tasks.data.items.length===0?<div className="empty"><p>还没有任务，从创建草稿开始。</p><Link className="button" href="/tasks/new">创建草稿</Link></div>:<div className="list">{tasks.data.items.map(t=><Link href={`/tasks/${t.id}`} className="list-item" key={t.id}><strong>{t.title}</strong><span className="badge">{t.status}</span></Link>)}</div>}</section>}</main>}
+import Link from 'next/link';
+import { ApiState } from '../../components/api-state';
+import { endpoints } from '../../lib/api';
+export default async function Dashboard() {
+  const me = await endpoints.me();
+  if (!me.ok)
+    return (
+      <main className="page shell">
+        <ApiState status={me.status} message={me.error.message} />
+      </main>
+    );
+  const tasks = await endpoints.tasks(`?publisherId=${me.data.id}&limit=50`);
+  return (
+    <main className="page shell">
+      <div className="page-header">
+        <div>
+          <span className="eyebrow">发布者工作台</span>
+          <h1>你好，{me.data.email.split('@')[0]}</h1>
+          <p>集中管理草稿、投标、执行与待验收任务。</p>
+        </div>
+        <Link className="button" href="/tasks/new">
+          发布任务
+        </Link>
+      </div>
+      <div className="grid-3">
+        <div className="stat">
+          <span className="muted">全部任务</span>
+          <strong>{tasks.ok ? tasks.data.items.length : '—'}</strong>
+        </div>
+        <div className="stat">
+          <span className="muted">待验收</span>
+          <strong>
+            {tasks.ok
+              ? tasks.data.items.filter((x) => x.status === 'DELIVERED').length
+              : '—'}
+          </strong>
+        </div>
+        <Link className="stat" href="/wallet">
+          <span className="muted">金币钱包</span>
+          <strong>查看 →</strong>
+        </Link>
+      </div>
+      <div style={{ height: 24 }} />
+      {!tasks.ok ? (
+        <ApiState
+          status={tasks.status}
+          message={
+            tasks.status === 401
+              ? '工作台已识别真实会话，但任务 API 尚未完成同一会话的身份接线。'
+              : tasks.error.message
+          }
+        />
+      ) : (
+        <section className="panel">
+          <h2>我的任务</h2>
+          {tasks.data.items.length === 0 ? (
+            <div className="empty">
+              <p>还没有任务，从创建草稿开始。</p>
+              <Link className="button" href="/tasks/new">
+                创建草稿
+              </Link>
+            </div>
+          ) : (
+            <div className="list">
+              {tasks.data.items.map((t) => (
+                <Link href={`/tasks/${t.id}`} className="list-item" key={t.id}>
+                  <strong>{t.title}</strong>
+                  <span className="badge">{t.status}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+    </main>
+  );
+}

@@ -60,9 +60,18 @@ export class ActorAuthGuard implements CanActivate {
         where: { keyHash: createHash('sha256').update(plain).digest('hex') },
         include: { agent: true },
       });
-      if (!key || key.revokedAt || (key.expiresAt && key.expiresAt <= new Date()) || key.agent.status === 'SUSPENDED')
+      if (
+        !key ||
+        key.revokedAt ||
+        (key.expiresAt && key.expiresAt <= new Date()) ||
+        key.agent.status === 'SUSPENDED'
+      )
         throw new UnauthorizedException('Invalid or revoked Agent API key');
-      request.agent = { id: key.agent.id, slug: key.agent.slug, scopes: key.scopes };
+      request.agent = {
+        id: key.agent.id,
+        slug: key.agent.slug,
+        scopes: key.scopes,
+      };
       request.actor = { type: 'AGENT', id: key.agent.id, requestId };
       return true;
     }
@@ -85,9 +94,17 @@ export const CurrentActor = createParamDecorator(
       agent?: { id: string };
     };
     if (trusted.user)
-      return { type: 'USER', id: trusted.user.id, requestId: request.header('x-request-id') ?? crypto.randomUUID() };
+      return {
+        type: 'USER',
+        id: trusted.user.id,
+        requestId: request.header('x-request-id') ?? crypto.randomUUID(),
+      };
     if (trusted.agent)
-      return { type: 'AGENT', id: trusted.agent.id, requestId: request.header('x-request-id') ?? crypto.randomUUID() };
+      return {
+        type: 'AGENT',
+        id: trusted.agent.id,
+        requestId: request.header('x-request-id') ?? crypto.randomUUID(),
+      };
     throw new UnauthorizedException('Authenticated actor is required');
   },
 );

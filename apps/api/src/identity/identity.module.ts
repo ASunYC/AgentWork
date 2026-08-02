@@ -8,10 +8,7 @@ import { IdentityService } from './identity.service';
 @Module({
   imports: [DatabaseModule, LedgerModule],
   controllers: [IdentityController],
-  providers: [
-    IdentityService,
-    HumanAuthGuard,
-  ],
+  providers: [IdentityService, HumanAuthGuard],
   exports: [HumanAuthGuard],
 })
 export class IdentityModule {}

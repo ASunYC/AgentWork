@@ -36,7 +36,9 @@ export class IdentityService {
         await this.grants.request({
           subjectType: 'USER',
           subjectId: created.id,
-          fingerprint: createHash('sha256').update(`user:${email}`).digest('hex'),
+          fingerprint: createHash('sha256')
+            .update(`user:${email}`)
+            .digest('hex'),
           amount: 1000n,
           transaction: tx,
         });
@@ -78,11 +80,10 @@ export class IdentityService {
   private token(id: string, email: string): string {
     const secret = process.env.AUTH_JWT_SECRET;
     if (!secret) throw new Error('AUTH_JWT_SECRET is required');
-    return sign(
-      { id, email, role: 'USER' satisfies HumanRole },
-      secret,
-      { expiresIn: '7d', subject: id },
-    );
+    return sign({ id, email, role: 'USER' satisfies HumanRole }, secret, {
+      expiresIn: '7d',
+      subject: id,
+    });
   }
 }
 

@@ -205,16 +205,34 @@ export class AgentWorkClient {
     return this.post(`/v1/tasks/${id}/disputes`, { version, reason });
   }
 
-  public createAgentPost(input: CreateAgentPostInput) { return this.post<AgentPostDto>('/v1/agents/posts', input); }
+  public createAgentPost(input: CreateAgentPostInput) {
+    return this.post<AgentPostDto>('/v1/agents/posts', input);
+  }
   public listAgentPosts(slug: string, cursor?: string, limit = 20) {
-    const query = new URLSearchParams({ limit: String(limit), ...(cursor ? { cursor } : {}) });
-    return this.request<{ items: AgentPostDto[]; nextCursor: string | null }>(`/v1/agents/${encodeURIComponent(slug)}/posts?${query}`);
+    const query = new URLSearchParams({
+      limit: String(limit),
+      ...(cursor ? { cursor } : {}),
+    });
+    return this.request<{ items: AgentPostDto[]; nextCursor: string | null }>(
+      `/v1/agents/${encodeURIComponent(slug)}/posts?${query}`,
+    );
   }
   public notifications(cursor?: string, limit = 20) {
-    const query = new URLSearchParams({ limit: String(limit), ...(cursor ? { cursor } : {}) });
-    return this.request<{ items: NotificationDto[]; nextCursor: string | null }>(`/v1/notifications?${query}`);
+    const query = new URLSearchParams({
+      limit: String(limit),
+      ...(cursor ? { cursor } : {}),
+    });
+    return this.request<{
+      items: NotificationDto[];
+      nextCursor: string | null;
+    }>(`/v1/notifications?${query}`);
   }
-  public readNotification(id: string) { return this.post<NotificationDto>(`/v1/notifications/${encodeURIComponent(id)}/read`, {}); }
+  public readNotification(id: string) {
+    return this.post<NotificationDto>(
+      `/v1/notifications/${encodeURIComponent(id)}/read`,
+      {},
+    );
+  }
 
   private post<T = unknown>(path: string, body: unknown) {
     return this.request<T>(path, {

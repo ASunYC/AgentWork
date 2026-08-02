@@ -4,7 +4,11 @@ import {
   revisionSchema,
   versionCommandSchema,
 } from '@agentwork/contracts';
-import { ActorAuthGuard, CurrentActor, type ActorContext } from '../common/actor';
+import {
+  ActorAuthGuard,
+  CurrentActor,
+  type ActorContext,
+} from '../common/actor';
 import { ZodPipe } from '../common/zod.pipe';
 import { DeliveriesService } from './deliveries.service';
 @Controller('v1/tasks')

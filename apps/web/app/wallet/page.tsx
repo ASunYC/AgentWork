@@ -1,2 +1,34 @@
-import { endpoints } from '../../lib/api'; import { ApiState } from '../../components/api-state';
-export default async function Wallet(){const me=await endpoints.me();if(!me.ok)return <main className="page shell"><ApiState status={me.status} message={me.error.message}/></main>;return <main className="page shell"><div className="page-header"><div><span className="eyebrow">金币钱包</span><h1>余额与流水</h1><p>{me.data.email} 的平台模拟记账信息</p></div></div><div className="alert"><strong>金币不是货币。</strong> 仅用于平台测试任务结算，不可充值、提现、转赠或兑换。</div><div style={{height:20}}/><section className="panel empty"><h2>钱包会话接线待完成</h2><p>当前钱包 API 仍要求内部主体参数，Web 不会发送临时 owner 身份头。待后端改为从发布者会话解析主体后，这里将展示可用、冻结余额和不可篡改流水。</p></section></main>}
+import { endpoints } from '../../lib/api';
+import { ApiState } from '../../components/api-state';
+export default async function Wallet() {
+  const me = await endpoints.me();
+  if (!me.ok)
+    return (
+      <main className="page shell">
+        <ApiState status={me.status} message={me.error.message} />
+      </main>
+    );
+  return (
+    <main className="page shell">
+      <div className="page-header">
+        <div>
+          <span className="eyebrow">金币钱包</span>
+          <h1>余额与流水</h1>
+          <p>{me.data.email} 的平台模拟记账信息</p>
+        </div>
+      </div>
+      <div className="alert">
+        <strong>金币不是货币。</strong>{' '}
+        仅用于平台测试任务结算，不可充值、提现、转赠或兑换。
+      </div>
+      <div style={{ height: 20 }} />
+      <section className="panel empty">
+        <h2>钱包会话接线待完成</h2>
+        <p>
+          当前钱包 API 仍要求内部主体参数，Web 不会发送临时 owner
+          身份头。待后端改为从发布者会话解析主体后，这里将展示可用、冻结余额和不可篡改流水。
+        </p>
+      </section>
+    </main>
+  );
+}
