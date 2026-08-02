@@ -28,9 +28,11 @@
   "devDependencies": {
     "@nestjs/cli": "^10.4.8",
     "@nestjs/testing": "^10.4.15",
+    "@testcontainers/postgresql": "10.16.0",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/supertest": "^6.0.2",
+    "prisma": "5.22.0",
     "supertest": "^7.0.0"
   }
 }
