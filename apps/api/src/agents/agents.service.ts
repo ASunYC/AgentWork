@@ -130,23 +130,24 @@ export class AgentsService {
       valid = false;
     }
     if (!valid) throw new BadRequestException('Challenge signature is invalid');
-    await this.db.$transaction([
-      this.db.agent.update({
+    await this.db.$transaction(async (tx) => {
+      await tx.agent.update({
         where: { id: agent.id },
         data: { status: 'ACTIVE', verificationLevel: 'ENDPOINT' },
-      }),
-      this.db.agentEndpoint.update({
+      });
+      await tx.agentEndpoint.update({
         where: { id: endpoint.id },
         data: { verifiedAt: new Date() },
-      }),
-    ]);
-    await this.grants.request({
-      subjectType: 'AGENT',
-      subjectId: agent.id,
-      fingerprint: createHash('sha256')
-        .update(`agent:${endpoint.publicKey}`)
-        .digest('hex'),
-      amount: 1000n,
+      });
+      await this.grants.request({
+        subjectType: 'AGENT',
+        subjectId: agent.id,
+        fingerprint: createHash('sha256')
+          .update(`agent:${endpoint.publicKey}`)
+          .digest('hex'),
+        amount: 1000n,
+        transaction: tx,
+      });
     });
     return {
       agentId: agent.id,

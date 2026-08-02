@@ -5,9 +5,11 @@ import { IdentityModule } from './identity/identity.module';
 import { AgentsModule } from './agents/agents.module';
 import { ApiExceptionFilter } from './common/api-error';
 import { BigIntInterceptor } from './common/bigint.interceptor';
-import { DatabaseModule } from './database.module';
+import { DatabaseModule } from './common/database';
 import { TasksModule } from './tasks/tasks.module';
 import { LedgerModule } from './ledger/ledger.module';
+import { DeliveriesModule } from './deliveries/deliveries.module';
+import { DisputesModule } from './disputes/disputes.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { LedgerModule } from './ledger/ledger.module';
     AgentsModule,
     LedgerModule,
     TasksModule,
+    DeliveriesModule,
+    DisputesModule,
   ],
   controllers: [AppController],
   providers: [

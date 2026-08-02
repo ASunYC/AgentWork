@@ -7,6 +7,7 @@ import {
 } from '../common/signup-grant.port';
 import { IdentityService } from './identity.service';
 
+
 class IdempotentGrantFake extends SignupGrantPort {
   readonly intents = new Map<string, SignupGrantIntent>();
   async request(intent: SignupGrantIntent) {
@@ -17,7 +18,7 @@ class IdempotentGrantFake extends SignupGrantPort {
 
 function database() {
   const users = new Map<string, any>();
-  return {
+  const db = {
     users,
     user: {
       create: vi.fn(async ({ data }: any) => {
@@ -36,7 +37,9 @@ function database() {
         [...users.values()].find((user) => user.id === where.id),
       ),
     },
+    $transaction: vi.fn(async (fn: any) => fn(db)),
   };
+  return db;
 }
 
 describe('IdentityService', () => {

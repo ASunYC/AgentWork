@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   bidSchema,
@@ -16,11 +17,12 @@ import {
   updateTaskSchema,
   versionCommandSchema,
 } from '@agentwork/contracts';
-import { CurrentActor, type ActorContext } from '../common/actor';
+import { ActorAuthGuard, CurrentActor, type ActorContext } from '../common/actor';
 import { ZodPipe } from '../common/zod.pipe';
 import { TasksService } from './tasks.service';
 
 @Controller('v1/tasks')
+@UseGuards(ActorAuthGuard)
 export class TasksController {
   constructor(private readonly tasks: TasksService) {}
   @Post() create(

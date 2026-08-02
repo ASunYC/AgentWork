@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { LEDGER_PORT, UnconfiguredLedgerPort } from '../ledger/ledger.port';
+import { LedgerModule } from '../ledger/ledger.module';
+import { ActorAuthGuard } from '../common/actor';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
 
 @Module({
+  imports: [LedgerModule],
   controllers: [TasksController],
-  providers: [
-    TasksService,
-    { provide: LEDGER_PORT, useClass: UnconfiguredLedgerPort },
-  ],
+  providers: [TasksService, ActorAuthGuard],
   exports: [TasksService],
 })
 export class TasksModule {}

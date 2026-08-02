@@ -1,21 +1,17 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../common/database';
-import {
-  SignupGrantPort,
-  UnconfiguredSignupGrantAdapter,
-} from '../common/signup-grant.port';
+import { LedgerModule } from '../ledger/ledger.module';
 import { HumanAuthGuard } from './auth';
 import { IdentityController } from './identity.controller';
 import { IdentityService } from './identity.service';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, LedgerModule],
   controllers: [IdentityController],
   providers: [
     IdentityService,
     HumanAuthGuard,
-    { provide: SignupGrantPort, useClass: UnconfiguredSignupGrantAdapter },
   ],
-  exports: [HumanAuthGuard, SignupGrantPort],
+  exports: [HumanAuthGuard],
 })
 export class IdentityModule {}

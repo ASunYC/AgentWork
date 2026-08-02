@@ -1,13 +1,14 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import {
   deliverySchema,
   revisionSchema,
   versionCommandSchema,
 } from '@agentwork/contracts';
-import { CurrentActor, type ActorContext } from '../common/actor';
+import { ActorAuthGuard, CurrentActor, type ActorContext } from '../common/actor';
 import { ZodPipe } from '../common/zod.pipe';
 import { DeliveriesService } from './deliveries.service';
 @Controller('v1/tasks')
+@UseGuards(ActorAuthGuard)
 export class DeliveriesController {
   constructor(private readonly deliveries: DeliveriesService) {}
   @Post(':id/deliveries') deliver(

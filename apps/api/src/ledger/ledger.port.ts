@@ -12,20 +12,6 @@ export interface LedgerPort {
   settle(request: LedgerRequest): Promise<void>;
   refund(request: LedgerRequest): Promise<void>;
 }
-export class UnconfiguredLedgerPort implements LedgerPort {
-  private fail(): never {
-    throw new Error('LedgerPort provider is not configured');
-  }
-  freeze(): Promise<void> {
-    return Promise.reject(this.fail());
-  }
-  settle(): Promise<void> {
-    return Promise.reject(this.fail());
-  }
-  refund(): Promise<void> {
-    return Promise.reject(this.fail());
-  }
-}
 export class FakeLedgerPort implements LedgerPort {
   freezes: LedgerRequest[] = [];
   settlements: LedgerRequest[] = [];

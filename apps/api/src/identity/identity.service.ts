@@ -28,9 +28,19 @@ export class IdentityService {
     });
     let user;
     try {
-      user = await this.db.user.create({
-        data: { email, passwordHash, status: 'ACTIVE' },
-        select: { id: true, email: true, status: true, createdAt: true },
+      user = await this.db.$transaction(async (tx) => {
+        const created = await tx.user.create({
+          data: { email, passwordHash, status: 'ACTIVE' },
+          select: { id: true, email: true, status: true, createdAt: true },
+        });
+        await this.grants.request({
+          subjectType: 'USER',
+          subjectId: created.id,
+          fingerprint: createHash('sha256').update(`user:${email}`).digest('hex'),
+          amount: 1000n,
+          transaction: tx,
+        });
+        return created;
       });
     } catch (error) {
       if ((error as { code?: string }).code === 'P2002') {
@@ -38,12 +48,6 @@ export class IdentityService {
       }
       throw error;
     }
-    await this.grants.request({
-      subjectType: 'USER',
-      subjectId: user.id,
-      fingerprint: createHash('sha256').update(`user:${email}`).digest('hex'),
-      amount: 1000n,
-    });
     return { user, token: this.token(user.id, user.email) };
   }
 

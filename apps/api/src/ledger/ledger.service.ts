@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { SignupGrantPort, WalletOwnerType } from '@agentwork/contracts';
+import type { WalletOwnerType } from '@agentwork/contracts';
 import { Prisma, type PrismaClient } from '@agentwork/database';
 import { LedgerError } from './ledger.errors';
 import type {
@@ -8,7 +8,10 @@ import type {
   TransactionResult,
   WalletSubject,
 } from './ledger.types';
-import { PrismaService } from './prisma.service';
+import { Inject } from '@nestjs/common';
+import { PRISMA } from '../common/database';
+import type { SignupGrantIntent, SignupGrantPort } from '../common/signup-grant.port';
+import type { LedgerPort, LedgerRequest } from './ledger.port';
 
 const PLATFORM_ID = '00000000-0000-7000-8000-000000000001';
 type Tx = Prisma.TransactionClient;
@@ -21,17 +24,47 @@ type Entry = {
 };
 
 @Injectable()
-export class LedgerService implements SignupGrantPort {
-  constructor(private readonly prisma: PrismaService) {}
+export class LedgerService implements SignupGrantPort, LedgerPort {
+  constructor(@Inject(PRISMA) private readonly prisma: PrismaClient) {}
+
+  async request(intent: SignupGrantIntent): Promise<void> {
+    await this.grantSignupCoins(
+      intent.subjectType,
+      intent.subjectId,
+      intent.fingerprint,
+      intent.amount,
+      intent.transaction as Tx | undefined,
+    );
+  }
+
+  async freeze(request: LedgerRequest): Promise<void> {
+    await this.freezeTaskBudget(request.publisherId, request.taskId, request.amount, {
+      idempotencyKey: request.idempotencyKey,
+    }, request.transaction as Tx | undefined);
+  }
+
+  async refund(request: LedgerRequest): Promise<void> {
+    await this.refundTask(request.taskId, request.publisherId, request.amount, {
+      idempotencyKey: request.idempotencyKey,
+    }, request.transaction as Tx | undefined);
+  }
+
+  async settle(request: LedgerRequest): Promise<void> {
+    if (!request.agentId) throw new LedgerError('INVALID_AMOUNT', 'Agent is required');
+    await this.settleTask(request.taskId, request.agentId, request.amount, 0n, {
+      idempotencyKey: request.idempotencyKey,
+    }, request.transaction as Tx | undefined);
+  }
 
   async grantSignupCoins(
     ownerType: WalletOwnerType,
     ownerId: string,
     fingerprint: string,
     amount = 1000n,
+    transaction?: Tx,
   ) {
     this.positive(amount);
-    return this.atomic(async (tx) => {
+    return this.inTransaction(transaction, async (tx) => {
       const existing = await tx.signupGrant.findFirst({
         where: { OR: [{ fingerprint }, { wallet: { ownerType, ownerId } }] },
       });
@@ -75,14 +108,16 @@ export class LedgerService implements SignupGrantPort {
     taskId: string,
     amount: bigint,
     context: OperationContext,
+    transaction?: Tx,
   ) {
-    return this.freeze('TASK_FREEZE', publisherId, taskId, amount, context);
+    return this.freeze('TASK_FREEZE', publisherId, taskId, amount, context, transaction);
   }
   increaseTaskBudget(
     publisherId: string,
     taskId: string,
     amount: bigint,
     context: OperationContext,
+    transaction?: Tx,
   ) {
     return this.freeze(
       'TASK_BUDGET_INCREASE',
@@ -90,6 +125,7 @@ export class LedgerService implements SignupGrantPort {
       taskId,
       amount,
       context,
+      transaction,
     );
   }
   private async freeze(
@@ -98,9 +134,10 @@ export class LedgerService implements SignupGrantPort {
     taskId: string,
     amount: bigint,
     context: OperationContext,
+    transaction?: Tx,
   ) {
     this.positive(amount);
-    return this.atomic(async (tx) => {
+    return this.inTransaction(transaction, async (tx) => {
       const duplicate = await this.duplicate(tx, context.idempotencyKey);
       if (duplicate) return duplicate;
       const wallet = await this.lockWallet(tx, 'USER', publisherId);
@@ -127,6 +164,7 @@ export class LedgerService implements SignupGrantPort {
     amount: bigint,
     fee = 0n,
     context: OperationContext,
+    transaction?: Tx,
   ) {
     this.positive(amount);
     if (fee < 0n || fee >= amount)
@@ -155,7 +193,7 @@ export class LedgerService implements SignupGrantPort {
         context.idempotencyKey,
         entries,
       );
-    });
+    }, transaction);
   }
 
   refundTask(
@@ -163,6 +201,7 @@ export class LedgerService implements SignupGrantPort {
     publisherId: string,
     amount: bigint,
     context: OperationContext,
+    transaction?: Tx,
   ) {
     this.positive(amount);
     return this.release(taskId, amount, context, async (tx, entries) => {
@@ -180,7 +219,7 @@ export class LedgerService implements SignupGrantPort {
         context.idempotencyKey,
         entries,
       );
-    });
+    }, transaction);
   }
 
   resolveDispute(
@@ -381,8 +420,9 @@ export class LedgerService implements SignupGrantPort {
     amount: bigint,
     context: OperationContext,
     fn: (tx: Tx, entries: Entry[]) => Promise<TransactionResult>,
+    transaction?: Tx,
   ) {
-    return this.atomic(async (tx) => {
+    return this.inTransaction(transaction, async (tx) => {
       const duplicate = await this.duplicate(tx, context.idempotencyKey);
       if (duplicate) return duplicate;
       const frozen = await this.taskFrozen(tx, taskId);
@@ -479,6 +519,9 @@ export class LedgerService implements SignupGrantPort {
     return this.prisma.$transaction(fn, {
       isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
     });
+  }
+  private inTransaction<T>(transaction: Tx | undefined, fn: (tx: Tx) => Promise<T>) {
+    return transaction ? fn(transaction) : this.atomic(fn);
   }
   private ensureWallet(tx: Tx, subject: WalletSubject) {
     return tx.wallet.upsert({

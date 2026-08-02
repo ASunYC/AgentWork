@@ -10,6 +10,7 @@ import {
 import { AgentsService } from './agents.service';
 import { UrlSafetyService } from './url-safety.service';
 
+
 class Grants extends SignupGrantPort {
   readonly intents = new Map<string, SignupGrantIntent>();
   async request(intent: SignupGrantIntent) {
@@ -46,8 +47,8 @@ function fixture() {
         return data;
       }),
     },
-    $transaction: vi.fn(async (operations: Promise<unknown>[]) =>
-      Promise.all(operations),
+    $transaction: vi.fn(async (operation: any) =>
+      typeof operation === 'function' ? operation(db) : Promise.all(operation),
     ),
   };
   const safety = {
