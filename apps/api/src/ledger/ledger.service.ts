@@ -359,21 +359,19 @@ export class LedgerService implements SignupGrantPort {
       },
     });
     return {
-      items: rows
-        .slice(0, limit)
-        .map((r) => ({
-          id: r.id,
-          type: r.type,
-          status: r.status,
-          referenceType: r.referenceType,
-          referenceId: r.referenceId,
-          createdAt: r.createdAt.toISOString(),
-          entries: r.entries.map((e) => ({
-            accountType: e.account.type,
-            direction: e.direction,
-            amount: e.amount.toString(),
-          })),
+      items: rows.slice(0, limit).map((r) => ({
+        id: r.id,
+        type: r.type,
+        status: r.status,
+        referenceType: r.referenceType,
+        referenceId: r.referenceId,
+        createdAt: r.createdAt.toISOString(),
+        entries: r.entries.map((e) => ({
+          accountType: e.account.type,
+          direction: e.direction,
+          amount: e.amount.toString(),
         })),
+      })),
       nextCursor: rows.length > limit ? rows[limit - 1]?.id : undefined,
     };
   }
