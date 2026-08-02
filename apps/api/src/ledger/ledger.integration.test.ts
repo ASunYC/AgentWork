@@ -10,6 +10,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { LedgerService } from './ledger.service';
 import { TasksService } from '../tasks/tasks.service';
 import { DeliveriesService } from '../deliveries/deliveries.service';
+import { DisputesService } from '../disputes/disputes.service';
+import { OperationsService } from '../operations/operations.service';
 
 const execFileAsync = promisify(execFile);
 const prismaCli = require.resolve('prisma/build/index.js');
@@ -42,6 +44,25 @@ afterAll(async () => {
 });
 
 describe.sequential('LedgerService PostgreSQL integration', () => {
+  it('atomically resolves disputes and audits idempotent adjustments', async () => {
+    const publisher = await client.user.create({ data: { email: `${crypto.randomUUID()}@example.test`, passwordHash: 'test', status: 'ACTIVE' } });
+    const owner = await client.user.create({ data: { email: `${crypto.randomUUID()}@example.test`, passwordHash: 'test', status: 'ACTIVE' } });
+    const admin = await client.user.create({ data: { email: `${crypto.randomUUID()}@example.test`, passwordHash: 'test', status: 'ACTIVE' } });
+    const agent = await client.agent.create({ data: { ownerUserId: owner.id, slug: `agent-${crypto.randomUUID()}`, name: 'Arbitrated Agent', manifestVersion: '1', status: 'ACTIVE' } });
+    await service.grantSignupCoins('USER', publisher.id, `publisher:${publisher.id}`);
+    const task = await client.task.create({ data: { publisherId: publisher.id, title: 'Disputed', objective: 'test', mode: 'CLAIM', budget: 100n, status: 'DISPUTED', assignments: { create: { agentId: agent.id } }, disputes: { create: { openedByType: 'USER', openedById: publisher.id, reason: 'quality' } } }, include: { disputes: true } });
+    await service.freezeTaskBudget(publisher.id, task.id, 100n, { idempotencyKey: `freeze:${task.id}` });
+    await new DisputesService(client, service).resolve(admin.id, crypto.randomUUID(), task.disputes[0]!.id, { refundAmount: 25n, payoutAmount: 75n, note: 'split', idempotencyKey: `resolve:${task.id}` });
+    expect((await client.task.findUniqueOrThrow({ where: { id: task.id } })).status).toBe('PARTIALLY_SETTLED');
+    expect((await balance('USER', publisher.id)).available).toBe(925n);
+    expect((await balance('AGENT', agent.id)).available).toBe(75n);
+    const operations = new OperationsService(client, service); const key = `adjust:${publisher.id}`;
+    const first = await operations.adjust(admin.id, crypto.randomUUID(), { ownerType: 'USER', ownerId: publisher.id, amount: 10n, reason: 'support correction', ticket: 'OPS-1', idempotencyKey: key });
+    const second = await operations.adjust(admin.id, crypto.randomUUID(), { ownerType: 'USER', ownerId: publisher.id, amount: 10n, reason: 'support correction', ticket: 'OPS-1', idempotencyKey: key });
+    expect(first.duplicate).toBe(false); expect(second.duplicate).toBe(true);
+    expect(await client.auditLog.count({ where: { action: 'ledger.adjust', resourceId: first.transactionId } })).toBe(1);
+  });
+
   it('runs the complete task lifecycle with task state and coins in one transaction', async () => {
     const user = await client.user.create({
       data: {
