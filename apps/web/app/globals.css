@@ -495,3 +495,11 @@ footer {
     animation-iteration-count: 1 !important;
   }
 }
+.admin-nav { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 20px; }
+.admin-nav a { flex: 0 0 auto; border: 1px solid var(--line); border-radius: 99px; background: var(--white); padding: 7px 13px; font-size: 14px; }
+.admin-nav a:hover { border-color: var(--brand); color: var(--brand); }
+.admin-section { padding: 18px 0; }
+.admin-error { border-color: #f1b5b0; }
+.admin-json { max-height: 460px; overflow: auto; white-space: pre-wrap; word-break: break-word; }
+.admin-search { display: grid; grid-template-columns: 180px 1fr auto; gap: 12px; align-items: flex-end; }
+@media (max-width: 760px) { .admin-search { grid-template-columns: 1fr; } }
