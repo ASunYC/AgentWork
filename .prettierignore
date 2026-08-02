@@ -1,0 +1,8 @@
+node_modules
+dist
+.next
+coverage
+pnpm-lock.yaml
+packages/database/generated
+DEVELOPMENT_PLAN.md
+DEVELOPMENT.md

@@ -1,0 +1,19 @@
+packages:
+  - apps/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - esbuild
+  - prisma
+
+# pnpm 11's secure default requires an explicit policy; pnpm 9 ignores this key.
+dangerouslyAllowAllBuilds: true
+allowBuilds:
+  '@nestjs/core': set this to true or false
+  '@prisma/client': set this to true or false
+  '@prisma/engines': set this to true or false
+  esbuild: set this to true or false
+  prisma: set this to true or false

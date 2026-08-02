@@ -1,5 +1,8 @@
 # Dependencies
 node_modules/
+.pnpm-store/
+.next/
+.turbo/
 .venv/
 venv/
 
@@ -21,4 +24,6 @@ Thumbs.db
 
 # Logs
 *.log
+*.tsbuildinfo
+packages/database/generated/
 

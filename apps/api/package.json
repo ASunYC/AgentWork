@@ -1,0 +1,26 @@
+{
+  "name": "@agentwork/api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "nest build",
+    "dev": "nest start --watch",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentwork/contracts": "workspace:*",
+    "@nestjs/common": "^10.4.15",
+    "@nestjs/core": "^10.4.15",
+    "@nestjs/platform-express": "^10.4.15",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.4.8",
+    "@nestjs/testing": "^10.4.15",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0"
+  }
+}
