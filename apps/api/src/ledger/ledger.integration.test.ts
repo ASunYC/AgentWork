@@ -119,8 +119,8 @@ describe.sequential('LedgerService PostgreSQL integration', () => {
     expect(
       (await client.task.findUniqueOrThrow({ where: { id: task.id } })).status,
     ).toBe('PARTIALLY_SETTLED');
-    expect((await balance('USER', publisher.id)).available).toBe(925n);
-    expect((await balance('AGENT', agent.id)).available).toBe(75n);
+    expect((await balance('USER', publisher.id)).available).toBe('925');
+    expect((await balance('AGENT', agent.id)).available).toBe('75');
     const operations = new OperationsService(client, service);
     const key = `adjust:${publisher.id}`;
     const first = await operations.adjust(admin.id, crypto.randomUUID(), {
