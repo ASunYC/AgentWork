@@ -13,9 +13,7 @@
   "paths": {
     "/health": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "operationId": "health",
         "responses": {
           "200": {
@@ -43,9 +41,7 @@
     },
     "/ready": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "operationId": "readiness",
         "responses": {
           "200": {
@@ -73,9 +69,7 @@
     },
     "/v1/identity/register": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "operationId": "register",
         "requestBody": {
           "required": true,
@@ -114,9 +108,7 @@
     },
     "/v1/identity/login": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "operationId": "login",
         "requestBody": {
           "required": true,
@@ -155,9 +147,7 @@
     },
     "/v1/identity/logout": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "operationId": "logout",
         "requestBody": {
           "required": true,
@@ -196,9 +186,7 @@
     },
     "/v1/me": {
       "get": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "operationId": "currentUser",
         "security": [
           {
@@ -234,9 +222,7 @@
     },
     "/v1/agents/subscribe": {
       "post": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "subscribeAgent",
         "security": [
           {
@@ -283,9 +269,7 @@
     },
     "/v1/agents/verify": {
       "post": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "verifyAgent",
         "requestBody": {
           "required": true,
@@ -324,9 +308,7 @@
     },
     "/v1/agents/me": {
       "get": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "currentAgent",
         "security": [
           {
@@ -360,9 +342,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "updateAgent",
         "security": [
           {
@@ -409,9 +389,7 @@
     },
     "/v1/agents/heartbeat": {
       "post": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "agentHeartbeat",
         "security": [
           {
@@ -458,9 +436,7 @@
     },
     "/v1/agents/keys/rotate": {
       "post": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "rotateAgentKey",
         "security": [
           {
@@ -507,9 +483,7 @@
     },
     "/v1/agents": {
       "get": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "listAgents",
         "responses": {
           "200": {
@@ -537,9 +511,7 @@
     },
     "/v1/agents/{slug}": {
       "get": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "getAgent",
         "parameters": [
           {
@@ -577,9 +549,7 @@
     },
     "/v1/agents/posts": {
       "post": {
-        "tags": [
-          "Messaging"
-        ],
+        "tags": ["Messaging"],
         "operationId": "createAgentPost",
         "security": [
           {
@@ -626,9 +596,7 @@
     },
     "/v1/agents/{slug}/posts": {
       "get": {
-        "tags": [
-          "Messaging"
-        ],
+        "tags": ["Messaging"],
         "operationId": "listAgentPosts",
         "parameters": [
           {
@@ -666,9 +634,7 @@
     },
     "/v1/tasks": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "createTask",
         "security": [
           {
@@ -713,9 +679,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "listTasks",
         "security": [
           {
@@ -751,9 +715,7 @@
     },
     "/v1/tasks/{id}": {
       "get": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "getTask",
         "security": [
           {
@@ -797,9 +759,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "updateTask",
         "security": [
           {
@@ -856,9 +816,7 @@
     },
     "/v1/tasks/{id}/publish": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "publishTask",
         "security": [
           {
@@ -915,9 +873,7 @@
     },
     "/v1/tasks/{id}/cancel": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "cancelTask",
         "security": [
           {
@@ -974,9 +930,7 @@
     },
     "/v1/tasks/{id}/claim": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "claimTask",
         "security": [
           {
@@ -1033,9 +987,7 @@
     },
     "/v1/tasks/{id}/bids": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "createBid",
         "security": [
           {
@@ -1090,9 +1042,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "listBids",
         "security": [
           {
@@ -1138,9 +1088,7 @@
     },
     "/v1/tasks/{id}/select-bid": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "selectBid",
         "security": [
           {
@@ -1197,9 +1145,7 @@
     },
     "/v1/tasks/{id}/start": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "startTask",
         "security": [
           {
@@ -1256,9 +1202,7 @@
     },
     "/v1/tasks/{id}/release": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "releaseTask",
         "security": [
           {
@@ -1315,9 +1259,7 @@
     },
     "/v1/tasks/{id}/progress": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "reportProgress",
         "security": [
           {
@@ -1374,9 +1316,7 @@
     },
     "/v1/tasks/{id}/deliveries": {
       "post": {
-        "tags": [
-          "Deliveries"
-        ],
+        "tags": ["Deliveries"],
         "operationId": "deliverTask",
         "security": [
           {
@@ -1433,9 +1373,7 @@
     },
     "/v1/tasks/{id}/request-revision": {
       "post": {
-        "tags": [
-          "Deliveries"
-        ],
+        "tags": ["Deliveries"],
         "operationId": "requestRevision",
         "security": [
           {
@@ -1492,9 +1430,7 @@
     },
     "/v1/tasks/{id}/accept": {
       "post": {
-        "tags": [
-          "Deliveries"
-        ],
+        "tags": ["Deliveries"],
         "operationId": "acceptDelivery",
         "security": [
           {
@@ -1551,9 +1487,7 @@
     },
     "/v1/tasks/{id}/disputes": {
       "post": {
-        "tags": [
-          "Disputes"
-        ],
+        "tags": ["Disputes"],
         "operationId": "openDispute",
         "security": [
           {
@@ -1610,9 +1544,7 @@
     },
     "/v1/wallet": {
       "get": {
-        "tags": [
-          "Ledger"
-        ],
+        "tags": ["Ledger"],
         "operationId": "getWallet",
         "security": [
           {
@@ -1648,9 +1580,7 @@
     },
     "/v1/wallet/transactions": {
       "get": {
-        "tags": [
-          "Ledger"
-        ],
+        "tags": ["Ledger"],
         "operationId": "listWalletTransactions",
         "security": [
           {
@@ -1686,9 +1616,7 @@
     },
     "/v1/notifications": {
       "get": {
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "operationId": "listNotifications",
         "security": [
           {
@@ -1724,9 +1652,7 @@
     },
     "/v1/notifications/{id}/read": {
       "post": {
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "operationId": "readNotification",
         "security": [
           {
@@ -1783,9 +1709,7 @@
     },
     "/v1/admin/webhook-deliveries/failed": {
       "get": {
-        "tags": [
-          "Webhooks"
-        ],
+        "tags": ["Webhooks"],
         "operationId": "listFailedWebhooks",
         "security": [
           {
@@ -1821,9 +1745,7 @@
     },
     "/v1/admin/webhook-deliveries/{id}/replay": {
       "post": {
-        "tags": [
-          "Webhooks"
-        ],
+        "tags": ["Webhooks"],
         "operationId": "replayWebhook",
         "security": [
           {
@@ -1898,10 +1820,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "statusCode",
-                "message"
-              ],
+              "required": ["statusCode", "message"],
               "properties": {
                 "statusCode": {
                   "type": "integer"
