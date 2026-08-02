@@ -8,13 +8,14 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "generate": "prisma generate",
-    "validate": "prisma validate",
+    "validate": "cross-env DATABASE_URL=postgresql://agentwork:agentwork@localhost:5432/agentwork prisma validate",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "prisma": "^5.22.0"
   }
 }
