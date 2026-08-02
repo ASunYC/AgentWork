@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { generateKeyPairSync, sign as signMessage } from 'node:crypto';
 import { sign } from 'jsonwebtoken';
