@@ -10,6 +10,8 @@ import {
 import { AgentsService } from './agents.service';
 import { UrlSafetyService } from './url-safety.service';
 
+process.env.CHALLENGE_SECRET = 'test-challenge-secret';
+
 
 class Grants extends SignupGrantPort {
   readonly intents = new Map<string, SignupGrantIntent>();
@@ -113,7 +115,7 @@ describe('AgentsService verification', () => {
     const { service, agent, privateKey } = fixture();
     const expired = sign(
       { agentId: agent.id, purpose: 'agent-webhook' },
-      'development-only-change-me',
+      'test-challenge-secret',
       { expiresIn: -1 },
     );
     await expect(service.activate(expired, '')).rejects.toBeInstanceOf(
@@ -121,7 +123,7 @@ describe('AgentsService verification', () => {
     );
     const challenge = sign(
       { agentId: agent.id, purpose: 'agent-webhook' },
-      'development-only-change-me',
+      'test-challenge-secret',
       { expiresIn: '1m' },
     );
     agent.status = 'ACTIVE';

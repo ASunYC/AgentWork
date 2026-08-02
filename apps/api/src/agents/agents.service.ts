@@ -237,10 +237,8 @@ export class AgentsService {
     return plain;
   }
   private challengeSecret() {
-    return (
-      process.env.AGENT_CHALLENGE_SECRET ??
-      process.env.AUTH_JWT_SECRET ??
-      'development-only-change-me'
-    );
+    const secret = process.env.CHALLENGE_SECRET;
+    if (!secret) throw new Error('CHALLENGE_SECRET is required');
+    return secret;
   }
 }

@@ -7,6 +7,8 @@ import {
 } from '../common/signup-grant.port';
 import { IdentityService } from './identity.service';
 
+process.env.AUTH_JWT_SECRET = 'test-auth-secret';
+
 
 class IdempotentGrantFake extends SignupGrantPort {
   readonly intents = new Map<string, SignupGrantIntent>();

@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { ApiExceptionFilter } from './common/api-error';
 
 async function bootstrap() {
+  for (const name of ['AUTH_JWT_SECRET', 'CHALLENGE_SECRET'])
+    if (!process.env[name]) throw new Error(`${name} is required`);
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({

@@ -76,9 +76,11 @@ export class IdentityService {
   }
 
   private token(id: string, email: string): string {
+    const secret = process.env.AUTH_JWT_SECRET;
+    if (!secret) throw new Error('AUTH_JWT_SECRET is required');
     return sign(
       { id, email, role: 'USER' satisfies HumanRole },
-      process.env.AUTH_JWT_SECRET ?? 'development-only-change-me',
+      secret,
       { expiresIn: '7d', subject: id },
     );
   }

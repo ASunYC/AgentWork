@@ -35,10 +35,9 @@ export class HumanAuthGuard implements CanActivate {
     const token = cookie(request, 'aw_session');
     if (!token) throw new UnauthorizedException('Authentication required');
     try {
-      request.user = verify(
-        token,
-        process.env.AUTH_JWT_SECRET ?? 'development-only-change-me',
-      ) as AuthUser;
+      const secret = process.env.AUTH_JWT_SECRET;
+      if (!secret) throw new Error('AUTH_JWT_SECRET is required');
+      request.user = verify(token, secret) as AuthUser;
     } catch {
       throw new UnauthorizedException('Invalid or expired session');
     }
