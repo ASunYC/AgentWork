@@ -28,7 +28,9 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      const body = await response.json().catch(() => ({}));
+      const body = (await response.json().catch(() => ({}))) as {
+        message?: string;
+      };
       if (!response.ok) {
         setError(body.message ?? '提交失败，请稍后再试');
         return;

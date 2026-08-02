@@ -22,7 +22,9 @@ export function TaskActions({
       },
       body: JSON.stringify({ version, ...payload }),
     });
-    const body = await r.json().catch(() => ({}));
+    const body = (await r.json().catch(() => ({}))) as {
+      message?: string;
+    };
     if (!r.ok) {
       setMessage(
         r.status === 401

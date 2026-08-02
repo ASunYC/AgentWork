@@ -133,7 +133,7 @@ export class LedgerService implements SignupGrantPort, LedgerPort {
     context: OperationContext,
     transaction?: Tx,
   ) {
-    return this.freeze(
+    return this.freezeFunds(
       'TASK_FREEZE',
       publisherId,
       taskId,
@@ -149,7 +149,7 @@ export class LedgerService implements SignupGrantPort, LedgerPort {
     context: OperationContext,
     transaction?: Tx,
   ) {
-    return this.freeze(
+    return this.freezeFunds(
       'TASK_BUDGET_INCREASE',
       publisherId,
       taskId,
@@ -158,7 +158,7 @@ export class LedgerService implements SignupGrantPort, LedgerPort {
       transaction,
     );
   }
-  private async freeze(
+  private async freezeFunds(
     type: 'TASK_FREEZE' | 'TASK_BUDGET_INCREASE',
     publisherId: string,
     taskId: string,

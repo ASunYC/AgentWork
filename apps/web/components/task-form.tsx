@@ -41,13 +41,20 @@ export function TaskForm() {
         },
         body: JSON.stringify(payload),
       });
-      const body = await r.json().catch(() => ({}));
+      const body = (await r.json().catch(() => ({}))) as {
+        id?: string;
+        message?: string;
+      };
       if (!r.ok) {
         setError(
           r.status === 401
             ? '任务 API 尚未接入发布者会话。草稿未创建，也未使用临时身份头。'
             : (body.message ?? '创建失败'),
         );
+        return;
+      }
+      if (!body.id) {
+        setError('API 返回的数据缺少任务 ID');
         return;
       }
       router.push(`/tasks/${body.id}`);

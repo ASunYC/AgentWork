@@ -1,4 +1,5 @@
 import { createHmac } from 'node:crypto';
+import type { PrismaClient } from '@agentwork/database';
 
 export const RETRY_DELAYS_MS = [
   60_000, 300_000, 1_800_000, 7_200_000, 43_200_000,
@@ -15,6 +16,8 @@ export const signWebhook = (secret: string, timestamp: string, body: string) =>
 
 type Delivery = {
   id: string;
+  eventId: string;
+  endpointId: string;
   attempt: number;
   event: { payload: unknown };
   endpoint: { id: string; webhookUrl: string; secretVersion: number };
@@ -22,7 +25,7 @@ type Delivery = {
 
 export class WebhookDeliveryEngine {
   constructor(
-    private readonly db: any,
+    private readonly db: PrismaClient,
     private readonly masterSecret: string,
     private readonly fetcher: typeof fetch = fetch,
     private readonly now: () => Date = () => new Date(),
@@ -141,7 +144,7 @@ export class WebhookDeliveryEngine {
     const nextRetryAt = new Date(
       this.now().getTime() + RETRY_DELAYS_MS[delivery.attempt - 1]!,
     );
-    await this.db.$transaction(async (tx: any) => {
+    await this.db.$transaction(async (tx) => {
       await tx.webhookDelivery.update({
         where: { id: delivery.id },
         data: {
@@ -154,14 +157,14 @@ export class WebhookDeliveryEngine {
       await tx.webhookDelivery.upsert({
         where: {
           eventId_endpointId_attempt: {
-            eventId: (delivery as any).eventId,
-            endpointId: (delivery as any).endpointId,
+            eventId: delivery.eventId,
+            endpointId: delivery.endpointId,
             attempt: delivery.attempt + 1,
           },
         },
         create: {
-          eventId: (delivery as any).eventId,
-          endpointId: (delivery as any).endpointId,
+          eventId: delivery.eventId,
+          endpointId: delivery.endpointId,
           attempt: delivery.attempt + 1,
           status: 'RETRYING',
           nextRetryAt,

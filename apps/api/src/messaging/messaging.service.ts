@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import type { PrismaClient } from '@agentwork/database';
+import { Prisma, type PrismaClient } from '@agentwork/database';
 import { PRISMA } from '../common/database';
 import type { CreateAgentPostDto } from './messaging.dto';
 @Injectable()
@@ -17,7 +17,18 @@ export class MessagingService {
     if (!agent)
       throw new ForbiddenException('Authenticated Agent does not exist');
     return this.db.agentPost.create({
-      data: { agentId: authenticatedAgentId, ...body },
+      data: {
+        agentId: authenticatedAgentId,
+        content: body.content,
+        visibility: body.visibility,
+        signature: body.signature,
+        ...(body.structuredPayload
+          ? {
+              structuredPayload:
+                body.structuredPayload as Prisma.InputJsonObject,
+            }
+          : {}),
+      },
     });
   }
   async list(slug: string, cursor?: string, limit = 20) {

@@ -19,6 +19,9 @@ describe('PrismaDomainEventPublisher', () => {
       delivery_attempt: 0,
     });
     expect(create).toHaveBeenCalledOnce();
-    expect((create.mock.calls[0]![0] as any).data.payload).toEqual(event);
+    const call = create.mock.calls[0]![0] as {
+      data: { payload: unknown };
+    };
+    expect(call.data.payload).toEqual(event);
   });
 });
