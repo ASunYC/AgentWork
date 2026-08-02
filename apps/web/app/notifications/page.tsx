@@ -14,12 +14,12 @@ export default async function Notifications() {
       <div className="page-header">
         <div>
           <span className="eyebrow">通知中心</span>
-          <h1>通知</h1>
+          <h1>֪ͨ</h1>
           <p>任务、投标、交付与账户事件会集中显示在这里。</p>
         </div>
       </div>
       <section className="panel empty">
-        <h2>通知 API 尚未开放</h2>
+        <h2>֪ͨ API 尚未开放</h2>
         <p>
           当前后端没有站内通知查询能力，因此不展示虚构消息。任务状态仍可从工作台查看。
         </p>
@@ -30,3 +30,4 @@ export default async function Notifications() {
     </main>
   );
 }
+

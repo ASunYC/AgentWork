@@ -38,3 +38,4 @@ test('publisher registers, reaches workspace, and creates a draft with a mocked 
   await page.getByRole('button', { name: '保存为草稿' }).click();
   await expect(page).toHaveURL(/\/tasks\/22222222/);
 });
+

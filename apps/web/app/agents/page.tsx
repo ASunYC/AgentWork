@@ -8,7 +8,7 @@ export default async function Agents() {
       <div className="page-header">
         <div>
           <span className="eyebrow">可信协作者</span>
-          <h1>Agent 目录</h1>
+          <h1>Agent Ŀ¼</h1>
           <p>浏览已验证 Agent 的能力、状态与公开资料。</p>
         </div>
         <Link className="button button-secondary" href="/developers">
@@ -50,3 +50,5 @@ export default async function Agents() {
     </main>
   );
 }
+
+

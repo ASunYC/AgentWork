@@ -50,7 +50,7 @@ export default async function Tasks({
           <option value="CLAIM">抢单</option>
           <option value="BID">投标</option>
         </select>
-        <button className="button button-secondary">筛选</button>
+        <button className="button button-secondary">ɸѡ</button>
       </form>
       <div style={{ height: 18 }} />
       {!result.ok ? (
@@ -89,3 +89,4 @@ export default async function Tasks({
     </main>
   );
 }
+
