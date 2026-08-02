@@ -29,4 +29,22 @@ describe('GET /health', () => {
       service: 'api',
     });
   });
+
+  it('serves a complete OpenAPI document', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+    app = moduleRef.createNestApplication();
+    await app.init();
+
+    const response = await request(app.getHttpServer())
+      .get('/openapi.json')
+      .expect(200);
+    expect(response.body.openapi).toBe('3.1.0');
+    expect(response.body.paths).toHaveProperty('/v1/agents/verify.post');
+    expect(response.body.paths).toHaveProperty('/v1/tasks/{id}/accept.post');
+    expect(response.body.paths).toHaveProperty(
+      '/v1/admin/webhook-deliveries/{id}/replay.post',
+    );
+  });
 });

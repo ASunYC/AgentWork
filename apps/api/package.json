@@ -8,7 +8,8 @@
     "start": "node dist/main.js",
     "prepare:deps": "pnpm --filter @agentwork/contracts build && pnpm --filter @agentwork/database build",
     "typecheck": "pnpm prepare:deps && tsc -p tsconfig.json --noEmit",
-    "test": "pnpm prepare:deps && vitest run"
+    "test": "pnpm prepare:deps && vitest run",
+    "openapi:generate": "pnpm build && node dist/openapi.generate.js"
   },
   "dependencies": {
     "@agentwork/contracts": "workspace:*",

@@ -20,7 +20,8 @@
     "db:migrate": "pnpm --filter @agentwork/database migrate:deploy",
     "db:seed": "pnpm --filter @agentwork/database seed",
     "infra:up": "docker compose -f infra/compose.yaml up -d",
-    "infra:down": "docker compose -f infra/compose.yaml down"
+    "infra:down": "docker compose -f infra/compose.yaml down",
+    "openapi:generate": "pnpm --filter @agentwork/api openapi:generate"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
