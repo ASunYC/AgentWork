@@ -92,17 +92,6 @@ export class DeliveriesService {
           },
         },
       });
-      await this.domainEvents.publish(
-        'delivery.revision_requested',
-        id,
-        {
-          task_id: id,
-          reason: input.reason,
-          revision: deliveries,
-        },
-        tx,
-        `task:${id}:revision-requested:${deliveries}`,
-      );
       return delivery;
     });
   }
@@ -141,6 +130,17 @@ export class DeliveriesService {
           payload: { reason: input.reason, revision: deliveries },
         },
       });
+      await this.domainEvents.publish(
+        'delivery.revision_requested',
+        id,
+        {
+          task_id: id,
+          reason: input.reason,
+          revision: deliveries,
+        },
+        tx,
+        `task:${id}:revision-requested:${deliveries}`,
+      );
       return tx.task.findUniqueOrThrow({ where: { id } });
     });
   }

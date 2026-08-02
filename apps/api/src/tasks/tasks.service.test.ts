@@ -5,21 +5,13 @@ import { DeliveriesService } from '../deliveries/deliveries.service';
 import { FakeLedgerPort } from '../ledger/ledger.port';
 import {
   DomainEventPublisherPort,
-  type DomainEventData,
   type DomainEventEnvelope,
   type DomainEventType,
-  type PrismaTransaction,
 } from '../webhooks/domain-event.publisher';
 
 class Events extends DomainEventPublisherPort {
   readonly published: string[] = [];
-  async publish(
-    type: DomainEventType,
-    _subjectId: string,
-    _data: DomainEventData,
-    _tx?: PrismaTransaction,
-    _idempotencyKey?: string,
-  ): Promise<DomainEventEnvelope> {
+  async publish(type: DomainEventType): Promise<DomainEventEnvelope> {
     this.published.push(type);
     return {} as DomainEventEnvelope;
   }

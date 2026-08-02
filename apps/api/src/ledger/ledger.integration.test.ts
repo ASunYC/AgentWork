@@ -105,7 +105,7 @@ describe.sequential('LedgerService PostgreSQL integration', () => {
     await service.freezeTaskBudget(publisher.id, task.id, 100n, {
       idempotencyKey: `freeze:${task.id}`,
     });
-    await new DisputesService(client, service).resolve(
+    await new DisputesService(client, service, events).resolve(
       admin.id,
       crypto.randomUUID(),
       task.disputes[0]!.id,

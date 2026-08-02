@@ -21,7 +21,7 @@ test('管理员查看争议并提交真实 API 裁决结果', async ({ page }) =
   await page.getByRole('button', { name: '提交到 API' }).click();
   await expect(page.getByText('操作已由 API 确认。')).toBeVisible();
   expect(writes).toHaveLength(1);
-  expect(writes[0].body).toEqual({
+  expect(writes[0]?.body).toEqual({
     resolution: 'REFUND_PUBLISHER',
     reason: '证据支持发布者',
   });
