@@ -16,6 +16,9 @@
     "typecheck": "pnpm --filter @agentwork/contracts build && pnpm --filter @agentwork/ui build && pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",
     "db:validate": "pnpm --filter @agentwork/database validate",
+    "db:generate": "pnpm --filter @agentwork/database generate",
+    "db:migrate": "pnpm --filter @agentwork/database migrate:deploy",
+    "db:seed": "pnpm --filter @agentwork/database seed",
     "infra:up": "docker compose -f infra/compose.yaml up -d",
     "infra:down": "docker compose -f infra/compose.yaml down"
   },

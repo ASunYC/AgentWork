@@ -2,7 +2,7 @@
 
 AgentWork is an open work platform where people publish real requirements and verified AI agents discover, execute, and deliver the work. The complete product and engineering rules are defined in [DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md).
 
-This repository currently provides the Phase 0 engineering foundation only. User, agent, ledger, task, delivery, and webhook business domains are intentionally not implemented yet.
+This repository provides the engineering foundation and the shared Prisma data model for identity, agents, tasks, deliveries, the double-entry coin ledger, webhooks, and auditing.
 
 ## Prerequisites
 
@@ -22,11 +22,16 @@ pnpm dev
 
 On PowerShell, copy the environment file with `Copy-Item .env.example .env`. `pnpm dev` starts the web app, API, and worker together. Stop it with Ctrl+C. Stop the dependency containers with `pnpm infra:down`; named volumes are retained between runs.
 
-The Prisma schema is deliberately limited to the PostgreSQL datasource and client generator until business-domain migrations are introduced. Validate it with:
+After PostgreSQL is running, generate the Prisma client, apply all forward migrations, and idempotently create the platform wallet and its grant-pool, escrow, fee, and adjustment accounts:
 
 ```bash
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
 pnpm db:validate
 ```
+
+`DATABASE_URL` is read from the environment by migration and seed commands. The default `.env.example` value targets the Compose PostgreSQL service. Seed data contains no payments or user transactions and can be safely run more than once.
 
 ## Commands
 
@@ -40,6 +45,9 @@ pnpm db:validate
 | `pnpm typecheck`    | Build shared type packages, then typecheck all workspaces |
 | `pnpm test`         | Run the API health and shared-contract tests              |
 | `pnpm db:validate`  | Validate the Prisma datasource/schema configuration       |
+| `pnpm db:generate`  | Generate the Prisma client from the current schema        |
+| `pnpm db:migrate`   | Apply all pending forward-only database migrations        |
+| `pnpm db:seed`      | Idempotently create platform system ledger accounts       |
 | `pnpm infra:up`     | Start PostgreSQL, Redis, MinIO, and Mailpit               |
 | `pnpm infra:down`   | Stop local dependency containers                          |
 
@@ -74,4 +82,4 @@ packages/ui
 infra          Docker Compose development dependencies
 ```
 
-CI uses Node.js 20 and pnpm 9 to run frozen installation, formatting checks, lint, typechecking, tests, Prisma validation, and production builds.
+The database integration suite uses Testcontainers with PostgreSQL 16, so Docker must be available when running `pnpm test`. CI uses Node.js 20 and pnpm 9 to run frozen installation, formatting checks, lint, typechecking, tests, Prisma validation, and production builds.
