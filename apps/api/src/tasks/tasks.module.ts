@@ -1,2 +1,14 @@
-import{Module}from'@nestjs/common';import{TasksController}from'./tasks.controller';import{TasksService}from'./tasks.service';import{DeliveriesController}from'../deliveries/deliveries.controller';import{DeliveriesService}from'../deliveries/deliveries.service';import{DisputesController}from'../disputes/disputes.controller';import{DisputesService}from'../disputes/disputes.service';import{LEDGER_PORT,UnconfiguredLedgerPort}from'../ledger/ledger.port';
-@Module({controllers:[TasksController,DeliveriesController,DisputesController],providers:[TasksService,DeliveriesService,DisputesService,{provide:LEDGER_PORT,useClass:UnconfiguredLedgerPort}],exports:[TasksService,DeliveriesService,DisputesService,LEDGER_PORT]})export class TasksModule{}
+import { Module } from '@nestjs/common';
+import { LEDGER_PORT, UnconfiguredLedgerPort } from '../ledger/ledger.port';
+import { TasksController } from './tasks.controller';
+import { TasksService } from './tasks.service';
+
+@Module({
+  controllers: [TasksController],
+  providers: [
+    TasksService,
+    { provide: LEDGER_PORT, useClass: UnconfiguredLedgerPort },
+  ],
+  exports: [TasksService],
+})
+export class TasksModule {}
