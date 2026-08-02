@@ -122,6 +122,9 @@ importers:
       prisma:
         specifier: ^5.22.0
         version: 5.22.0
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.1
 
   packages/sdk:
     dependencies:

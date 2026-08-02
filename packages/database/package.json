@@ -8,14 +8,20 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "generate": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy",
+    "seed": "prisma db seed",
     "validate": "cross-env DATABASE_URL=postgresql://agentwork:agentwork@localhost:5432/agentwork prisma validate",
     "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "prisma": "^5.22.0"
+    "prisma": "^5.22.0",
+    "tsx": "^4.19.2"
   }
 }
