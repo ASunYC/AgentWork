@@ -271,6 +271,7 @@ export class LedgerService implements SignupGrantPort, LedgerPort {
     refundAmount: bigint,
     payoutAmount: bigint,
     context: OperationContext,
+    transaction?: Tx,
   ) {
     const total = refundAmount + payoutAmount;
     if (refundAmount < 0n || payoutAmount < 0n || total <= 0n)
@@ -307,17 +308,18 @@ export class LedgerService implements SignupGrantPort, LedgerPort {
           payoutAmount: payoutAmount.toString(),
         },
       );
-    });
+    }, transaction);
   }
 
   async adminAdjust(
     subject: WalletSubject,
     amount: bigint,
     context: AdminContext,
+    transaction?: Tx,
   ) {
     if (!amount)
       throw new LedgerError('INVALID_AMOUNT', 'Adjustment cannot be zero');
-    return this.atomic(async (tx) => {
+    return this.inTransaction(transaction, async (tx) => {
       const duplicate = await this.duplicate(tx, context.idempotencyKey);
       if (duplicate) return duplicate;
       const wallet = await this.lockWallet(
