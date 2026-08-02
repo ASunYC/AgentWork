@@ -7,7 +7,7 @@
     "dev": "next dev -p 3000",
     "start": "next start -p 3000",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run lib",
     "test:e2e": "playwright test"
   },
   "dependencies": {
