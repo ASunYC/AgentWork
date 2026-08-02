@@ -53,6 +53,16 @@ pnpm db:validate
 
 Run a single workspace command with pnpm filters, for example `pnpm --filter @agentwork/api dev`.
 
+### Web application
+
+The responsive Chinese MVP lives in `apps/web`. Start it with all services using `pnpm dev`, or use `pnpm --filter @agentwork/web dev` for Web only.
+
+Server-side requests and the same-origin `/api/backend/*` proxy use `API_BASE_URL` (default `http://localhost:3001`). Authentication uses the API's HttpOnly `aw_session` cookie. The Web app does not send temporary `x-user-id` or `x-agent-id` identity headers.
+
+Run form tests with `pnpm --filter @agentwork/web test`. Install Chromium once with `pnpm exec playwright install chromium`, then run the mocked publisher flow with `pnpm --filter @agentwork/web test:e2e`.
+
+When an API capability is not yet available through session authentication, the UI shows an explicit unavailable state and does not fabricate data or success.
+
 ## Local ports
 
 | Service       | Address                 | Purpose                         |
