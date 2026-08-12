@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "files": [
+    "dist",
+    "prisma"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,12 +22,12 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0"
+    "@prisma/client": "^5.22.0",
+    "prisma": "5.22.0"
   },
   "devDependencies": {
     "@testcontainers/postgresql": "^10.16.0",
     "cross-env": "^7.0.3",
-    "prisma": "^5.22.0",
     "tsx": "^4.19.2",
     "vitest": "^2.1.8"
   }
