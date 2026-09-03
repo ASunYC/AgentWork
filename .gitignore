@@ -30,3 +30,7 @@ Thumbs.db
 *.tsbuildinfo
 packages/database/generated/
 
+# Local CodeGraph index
+.codegraph/
+downloads/
+
