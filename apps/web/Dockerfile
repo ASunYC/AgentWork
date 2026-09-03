@@ -1,12 +1,14 @@
 FROM node:20-bookworm-slim AS builder
 
+ARG DEBIAN_MIRROR=http://deb.debian.org
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
 ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /workspace
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends g++ make openssl python3 \
+RUN sed -i "s|http://deb.debian.org|${DEBIAN_MIRROR}|g" /etc/apt/sources.list.d/debian.sources \
+  && apt-get -o Acquire::Retries=5 update \
+  && apt-get -o Acquire::Retries=5 install -y --no-install-recommends g++ make openssl python3 \
   && rm -rf /var/lib/apt/lists/*
 RUN corepack enable && corepack prepare pnpm@9.15.5 --activate
 COPY . .

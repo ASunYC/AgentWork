@@ -1,5 +1,7 @@
 .git
 .github
+.codegraph
+downloads
 .env
 .env.*
 !.env.example
