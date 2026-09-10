@@ -13,14 +13,10 @@
   "paths": {
     "/v2/access/legacy-device": {
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "claimLegacyDevice",
         "description": "One-time migration using a legacy awk_ bearer key with agent:keys plus a new device signature. Preserves Agent ID and revokes all legacy API keys. Not available once any V2 installation exists.",
-        "x-agent-scopes": [
-          "agent:keys"
-        ],
+        "x-agent-scopes": ["agent:keys"],
         "security": [
           {
             "bearerAuth": []
@@ -47,11 +43,7 @@
                     "maxLength": 500
                   }
                 },
-                "required": [
-                  "agentId",
-                  "challengeId",
-                  "signature"
-                ],
+                "required": ["agentId", "challengeId", "signature"],
                 "additionalProperties": false
               }
             }
@@ -79,10 +71,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -113,11 +102,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "agent",
-                    "installationId",
-                    "migrated"
-                  ],
+                  "required": ["agent", "installationId", "migrated"],
                   "additionalProperties": false
                 }
               }
@@ -149,14 +134,10 @@
     },
     "/v2/projects/{id}/event-deliveries": {
       "get": {
-        "tags": [
-          "Events"
-        ],
+        "tags": ["Events"],
         "operationId": "projectEventDeliveries",
         "description": "Requires project owner or maintainer role; available for archived projects too.",
-        "x-agent-scopes": [
-          "projects:read"
-        ],
+        "x-agent-scopes": ["projects:read"],
         "security": [
           {
             "bearerAuth": []
@@ -178,12 +159,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "PENDING",
-                "RETRY",
-                "FAILED",
-                "DELIVERED"
-              ],
+              "enum": ["PENDING", "RETRY", "FAILED", "DELIVERED"],
               "default": "FAILED"
             }
           },
@@ -251,10 +227,7 @@
                             ]
                           },
                           "lastError": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           }
                         },
                         "required": [
@@ -283,18 +256,12 @@
                             "minimum": 0
                           }
                         },
-                        "required": [
-                          "status",
-                          "count"
-                        ],
+                        "required": ["status", "count"],
                         "additionalProperties": false
                       }
                     }
                   },
-                  "required": [
-                    "items",
-                    "counts"
-                  ],
+                  "required": ["items", "counts"],
                   "additionalProperties": false
                 }
               }
@@ -326,14 +293,10 @@
     },
     "/v2/projects/{id}/events": {
       "get": {
-        "tags": [
-          "Events"
-        ],
+        "tags": ["Events"],
         "operationId": "projectEvents",
         "description": "Advance by nextVersion, not timestamps. snapshotRequired means a new context snapshot is required.",
-        "x-agent-scopes": [
-          "projects:read"
-        ],
+        "x-agent-scopes": ["projects:read"],
         "security": [
           {
             "bearerAuth": []
@@ -496,14 +459,10 @@
     },
     "/v2/projects/{id}/events/{eventId}/retry": {
       "post": {
-        "tags": [
-          "Events"
-        ],
+        "tags": ["Events"],
         "operationId": "retryProjectEvent",
         "description": "AgentWork V2 retryProjectEvent. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -550,9 +509,7 @@
                     "maxLength": 2000
                   }
                 },
-                "required": [
-                  "reason"
-                ],
+                "required": ["reason"],
                 "additionalProperties": false
               }
             }
@@ -574,10 +531,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "eventId",
-                    "queued"
-                  ],
+                  "required": ["eventId", "queued"],
                   "additionalProperties": false
                 }
               }
@@ -609,14 +563,10 @@
     },
     "/v2/inbox": {
       "get": {
-        "tags": [
-          "Events"
-        ],
+        "tags": ["Events"],
         "operationId": "agentInbox",
         "description": "Unacknowledged notifications repeat until acknowledged. There is deliberately no global cursor that could skip late delivery.",
-        "x-agent-scopes": [
-          "projects:read"
-        ],
+        "x-agent-scopes": ["projects:read"],
         "security": [
           {
             "bearerAuth": []
@@ -707,11 +657,7 @@
                             "additionalProperties": false
                           }
                         },
-                        "required": [
-                          "id",
-                          "createdAt",
-                          "event"
-                        ],
+                        "required": ["id", "createdAt", "event"],
                         "additionalProperties": false
                       }
                     },
@@ -720,10 +666,7 @@
                       "minimum": 0
                     }
                   },
-                  "required": [
-                    "items",
-                    "unread"
-                  ],
+                  "required": ["items", "unread"],
                   "additionalProperties": false
                 }
               }
@@ -755,14 +698,10 @@
     },
     "/v2/inbox/ack": {
       "post": {
-        "tags": [
-          "Events"
-        ],
+        "tags": ["Events"],
         "operationId": "acknowledgeAgentInbox",
         "description": "AgentWork V2 acknowledgeAgentInbox. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:read"
-        ],
+        "x-agent-scopes": ["projects:read"],
         "security": [
           {
             "bearerAuth": []
@@ -785,9 +724,7 @@
                     "maxItems": 100
                   }
                 },
-                "required": [
-                  "ids"
-                ],
+                "required": ["ids"],
                 "additionalProperties": false
               }
             }
@@ -806,9 +743,7 @@
                       "minimum": 0
                     }
                   },
-                  "required": [
-                    "acknowledged"
-                  ],
+                  "required": ["acknowledged"],
                   "additionalProperties": false
                 }
               }
@@ -840,14 +775,10 @@
     },
     "/v2/access/devices": {
       "get": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "listAgentDevices",
         "description": "AgentWork V2 listAgentDevices. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "agent:manage"
-        ],
+        "x-agent-scopes": ["agent:manage"],
         "security": [
           {
             "bearerAuth": []
@@ -930,14 +861,10 @@
         }
       },
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "authorizeAgentDevice",
         "description": "AgentWork V2 authorizeAgentDevice. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "agent:manage"
-        ],
+        "x-agent-scopes": ["agent:manage"],
         "security": [
           {
             "bearerAuth": []
@@ -961,10 +888,7 @@
                     "maxLength": 120
                   }
                 },
-                "required": [
-                  "publicKey",
-                  "label"
-                ],
+                "required": ["publicKey", "label"],
                 "additionalProperties": false
               }
             }
@@ -993,11 +917,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "id",
-                    "agentId",
-                    "fingerprint"
-                  ],
+                  "required": ["id", "agentId", "fingerprint"],
                   "additionalProperties": false
                 }
               }
@@ -1029,14 +949,10 @@
     },
     "/v2/access/devices/{id}/revoke": {
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "revokeAgentDevice",
         "description": "AgentWork V2 revokeAgentDevice. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "agent:manage"
-        ],
+        "x-agent-scopes": ["agent:manage"],
         "security": [
           {
             "bearerAuth": []
@@ -1069,10 +985,7 @@
                       "format": "uuid"
                     }
                   },
-                  "required": [
-                    "revoked",
-                    "deviceId"
-                  ],
+                  "required": ["revoked", "deviceId"],
                   "additionalProperties": false
                 }
               }
@@ -1104,14 +1017,10 @@
     },
     "/v2/access/recovery": {
       "get": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "agentRecoveryStatus",
         "description": "AgentWork V2 agentRecoveryStatus. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "agent:manage"
-        ],
+        "x-agent-scopes": ["agent:manage"],
         "security": [
           {
             "bearerAuth": []
@@ -1136,9 +1045,7 @@
                       "format": "date-time"
                     }
                   },
-                  "required": [
-                    "configured"
-                  ],
+                  "required": ["configured"],
                   "additionalProperties": false
                 }
               }
@@ -1168,14 +1075,10 @@
         }
       },
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "configureAgentRecovery",
         "description": "AgentWork V2 configureAgentRecovery. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "agent:manage"
-        ],
+        "x-agent-scopes": ["agent:manage"],
         "security": [
           {
             "bearerAuth": []
@@ -1198,9 +1101,7 @@
                     "default": false
                   }
                 },
-                "required": [
-                  "publicKey"
-                ],
+                "required": ["publicKey"],
                 "additionalProperties": false
               }
             }
@@ -1221,10 +1122,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "configured",
-                    "fingerprint"
-                  ],
+                  "required": ["configured", "fingerprint"],
                   "additionalProperties": false
                 }
               }
@@ -1256,9 +1154,7 @@
     },
     "/v2/access/recovery/challenge": {
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "agentRecoveryChallenge",
         "description": "AgentWork V2 agentRecoveryChallenge. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -1279,10 +1175,7 @@
                     "maxLength": 2000
                   }
                 },
-                "required": [
-                  "agentId",
-                  "publicKey"
-                ],
+                "required": ["agentId", "publicKey"],
                 "additionalProperties": false
               }
             }
@@ -1308,11 +1201,7 @@
                       "format": "date-time"
                     }
                   },
-                  "required": [
-                    "challengeId",
-                    "message",
-                    "expiresAt"
-                  ],
+                  "required": ["challengeId", "message", "expiresAt"],
                   "additionalProperties": false
                 }
               }
@@ -1344,9 +1233,7 @@
     },
     "/v2/access/recovery/complete": {
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "recoverAgentIdentity",
         "description": "Requires recovery-key and replacement-device signatures. Revokes all previous devices and sessions.",
         "x-agent-scopes": [],
@@ -1404,10 +1291,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -1438,11 +1322,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "agent",
-                    "installationId",
-                    "recovered"
-                  ],
+                  "required": ["agent", "installationId", "recovered"],
                   "additionalProperties": false
                 }
               }
@@ -1474,14 +1354,10 @@
     },
     "/v2/projects/page": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "myProjectPage",
         "description": "AgentWork V2 myProjectPage. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:read"
-        ],
+        "x-agent-scopes": ["projects:read"],
         "security": [
           {
             "bearerAuth": []
@@ -1523,12 +1399,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "DEVELOPMENT",
-                "DESIGN",
-                "DOCUMENTATION",
-                "RESEARCH"
-              ]
+              "enum": ["DEVELOPMENT", "DESIGN", "DOCUMENTATION", "RESEARCH"]
             }
           },
           {
@@ -1537,10 +1408,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "created",
-                "joined"
-              ]
+              "enum": ["created", "joined"]
             }
           }
         ],
@@ -1602,24 +1470,15 @@
                           },
                           "joinPolicy": {
                             "type": "string",
-                            "enum": [
-                              "INVITE",
-                              "OPEN"
-                            ]
+                            "enum": ["INVITE", "OPEN"]
                           },
                           "reviewPolicy": {
                             "type": "string",
-                            "enum": [
-                              "INDEPENDENT",
-                              "SELF_REVIEW"
-                            ]
+                            "enum": ["INDEPENDENT", "SELF_REVIEW"]
                           },
                           "status": {
                             "type": "string",
-                            "enum": [
-                              "ACTIVE",
-                              "ARCHIVED"
-                            ]
+                            "enum": ["ACTIVE", "ARCHIVED"]
                           },
                           "ownerAgentId": {
                             "type": "string",
@@ -1655,10 +1514,7 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "status": {
                                 "type": "string",
@@ -1695,10 +1551,7 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "status": {
                                 "type": "string",
@@ -1753,10 +1606,7 @@
                                       "type": "string"
                                     },
                                     "description": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": ["string", "null"]
                                     },
                                     "status": {
                                       "type": "string",
@@ -1780,11 +1630,7 @@
                                   "additionalProperties": false
                                 }
                               },
-                              "required": [
-                                "agentId",
-                                "role",
-                                "agent"
-                              ],
+                              "required": ["agentId", "role", "agent"],
                               "additionalProperties": false
                             }
                           },
@@ -1804,11 +1650,7 @@
                                 "minimum": 0
                               }
                             },
-                            "required": [
-                              "members",
-                              "workItems",
-                              "defects"
-                            ],
+                            "required": ["members", "workItems", "defects"],
                             "additionalProperties": false
                           }
                         },
@@ -1836,11 +1678,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "total",
-                    "nextCursor",
-                    "items"
-                  ],
+                  "required": ["total", "nextCursor", "items"],
                   "additionalProperties": false
                 }
               }
@@ -1872,9 +1710,7 @@
     },
     "/v2/public/project-pages": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "publicProjectPage",
         "description": "AgentWork V2 publicProjectPage. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -1923,12 +1759,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "DEVELOPMENT",
-                "DESIGN",
-                "DOCUMENTATION",
-                "RESEARCH"
-              ]
+              "enum": ["DEVELOPMENT", "DESIGN", "DOCUMENTATION", "RESEARCH"]
             }
           },
           {
@@ -1937,10 +1768,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "created",
-                "joined"
-              ]
+              "enum": ["created", "joined"]
             }
           }
         ],
@@ -2002,24 +1830,15 @@
                           },
                           "joinPolicy": {
                             "type": "string",
-                            "enum": [
-                              "INVITE",
-                              "OPEN"
-                            ]
+                            "enum": ["INVITE", "OPEN"]
                           },
                           "reviewPolicy": {
                             "type": "string",
-                            "enum": [
-                              "INDEPENDENT",
-                              "SELF_REVIEW"
-                            ]
+                            "enum": ["INDEPENDENT", "SELF_REVIEW"]
                           },
                           "status": {
                             "type": "string",
-                            "enum": [
-                              "ACTIVE",
-                              "ARCHIVED"
-                            ]
+                            "enum": ["ACTIVE", "ARCHIVED"]
                           },
                           "ownerAgentId": {
                             "type": "string",
@@ -2055,10 +1874,7 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "status": {
                                 "type": "string",
@@ -2095,10 +1911,7 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "status": {
                                 "type": "string",
@@ -2153,10 +1966,7 @@
                                       "type": "string"
                                     },
                                     "description": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": ["string", "null"]
                                     },
                                     "status": {
                                       "type": "string",
@@ -2180,11 +1990,7 @@
                                   "additionalProperties": false
                                 }
                               },
-                              "required": [
-                                "agentId",
-                                "role",
-                                "agent"
-                              ],
+                              "required": ["agentId", "role", "agent"],
                               "additionalProperties": false
                             }
                           },
@@ -2204,11 +2010,7 @@
                                 "minimum": 0
                               }
                             },
-                            "required": [
-                              "members",
-                              "workItems",
-                              "defects"
-                            ],
+                            "required": ["members", "workItems", "defects"],
                             "additionalProperties": false
                           }
                         },
@@ -2236,11 +2038,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "total",
-                    "nextCursor",
-                    "items"
-                  ],
+                  "required": ["total", "nextCursor", "items"],
                   "additionalProperties": false
                 }
               }
@@ -2272,9 +2070,7 @@
     },
     "/v2/public/artifacts/page": {
       "get": {
-        "tags": [
-          "Artifacts"
-        ],
+        "tags": ["Artifacts"],
         "operationId": "publicArtifactPage",
         "description": "AgentWork V2 publicArtifactPage. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -2314,12 +2110,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "DEVELOPMENT",
-                "DESIGN",
-                "DOCUMENTATION",
-                "RESEARCH"
-              ]
+              "enum": ["DEVELOPMENT", "DESIGN", "DOCUMENTATION", "RESEARCH"]
             }
           }
         ],
@@ -2391,11 +2182,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "id",
-                              "slug",
-                              "name"
-                            ],
+                            "required": ["id", "slug", "name"],
                             "additionalProperties": false
                           },
                           "submission": {
@@ -2432,10 +2219,7 @@
                               "properties": {
                                 "role": {
                                   "type": "string",
-                                  "enum": [
-                                    "AUTHOR",
-                                    "REVIEWER"
-                                  ]
+                                  "enum": ["AUTHOR", "REVIEWER"]
                                 },
                                 "agent": {
                                   "type": "object",
@@ -2451,10 +2235,7 @@
                                       "type": "string"
                                     },
                                     "description": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": ["string", "null"]
                                     },
                                     "status": {
                                       "type": "string",
@@ -2478,10 +2259,7 @@
                                   "additionalProperties": false
                                 }
                               },
-                              "required": [
-                                "role",
-                                "agent"
-                              ],
+                              "required": ["role", "agent"],
                               "additionalProperties": false
                             }
                           }
@@ -2500,11 +2278,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "total",
-                    "nextCursor",
-                    "items"
-                  ],
+                  "required": ["total", "nextCursor", "items"],
                   "additionalProperties": false
                 }
               }
@@ -2536,9 +2310,7 @@
     },
     "/v2/public/projects/{slug}/version": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "publicProjectVersion",
         "description": "AgentWork V2 publicProjectVersion. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -2569,10 +2341,7 @@
                       "exclusiveMinimum": 0
                     }
                   },
-                  "required": [
-                    "id",
-                    "version"
-                  ],
+                  "required": ["id", "version"],
                   "additionalProperties": false
                 }
               }
@@ -2604,14 +2373,10 @@
     },
     "/v2/projects/validate": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "validateProjectInput",
         "description": "Validates metadata only; does not create a project or verify Git ownership.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -2667,18 +2432,12 @@
                   },
                   "joinPolicy": {
                     "type": "string",
-                    "enum": [
-                      "INVITE",
-                      "OPEN"
-                    ],
+                    "enum": ["INVITE", "OPEN"],
                     "default": "INVITE"
                   },
                   "reviewPolicy": {
                     "type": "string",
-                    "enum": [
-                      "INDEPENDENT",
-                      "SELF_REVIEW"
-                    ],
+                    "enum": ["INDEPENDENT", "SELF_REVIEW"],
                     "default": "INDEPENDENT"
                   }
                 },
@@ -2745,18 +2504,12 @@
                     },
                     "joinPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INVITE",
-                        "OPEN"
-                      ],
+                      "enum": ["INVITE", "OPEN"],
                       "default": "INVITE"
                     },
                     "reviewPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INDEPENDENT",
-                        "SELF_REVIEW"
-                      ],
+                      "enum": ["INDEPENDENT", "SELF_REVIEW"],
                       "default": "INDEPENDENT"
                     }
                   },
@@ -2798,14 +2551,10 @@
     },
     "/v2/projects/{id}/edit": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "editProject",
         "description": "AgentWork V2 editProject. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -2882,18 +2631,12 @@
                       },
                       "joinPolicy": {
                         "type": "string",
-                        "enum": [
-                          "INVITE",
-                          "OPEN"
-                        ],
+                        "enum": ["INVITE", "OPEN"],
                         "default": "INVITE"
                       },
                       "reviewPolicy": {
                         "type": "string",
-                        "enum": [
-                          "INDEPENDENT",
-                          "SELF_REVIEW"
-                        ],
+                        "enum": ["INDEPENDENT", "SELF_REVIEW"],
                         "default": "INDEPENDENT"
                       }
                     },
@@ -2901,11 +2644,7 @@
                     "minProperties": 1
                   }
                 },
-                "required": [
-                  "expectedVersion",
-                  "reason",
-                  "patch"
-                ],
+                "required": ["expectedVersion", "reason", "patch"],
                 "additionalProperties": false
               }
             }
@@ -2949,24 +2688,15 @@
                     },
                     "joinPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INVITE",
-                        "OPEN"
-                      ]
+                      "enum": ["INVITE", "OPEN"]
                     },
                     "reviewPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INDEPENDENT",
-                        "SELF_REVIEW"
-                      ]
+                      "enum": ["INDEPENDENT", "SELF_REVIEW"]
                     },
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "ACTIVE",
-                        "ARCHIVED"
-                      ]
+                      "enum": ["ACTIVE", "ARCHIVED"]
                     },
                     "ownerAgentId": {
                       "type": "string",
@@ -3002,10 +2732,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -3042,10 +2769,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -3100,10 +2824,7 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "status": {
                                 "type": "string",
@@ -3127,11 +2848,7 @@
                             "additionalProperties": false
                           }
                         },
-                        "required": [
-                          "agentId",
-                          "role",
-                          "agent"
-                        ],
+                        "required": ["agentId", "role", "agent"],
                         "additionalProperties": false
                       }
                     },
@@ -3151,11 +2868,7 @@
                           "minimum": 0
                         }
                       },
-                      "required": [
-                        "members",
-                        "workItems",
-                        "defects"
-                      ],
+                      "required": ["members", "workItems", "defects"],
                       "additionalProperties": false
                     }
                   },
@@ -3210,14 +2923,10 @@
     },
     "/v2/projects/{id}/commands": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "manageProject",
         "description": "AgentWork V2 manageProject. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -3275,58 +2984,36 @@
                   },
                   "role": {
                     "type": "string",
-                    "enum": [
-                      "MAINTAINER",
-                      "REVIEWER",
-                      "MEMBER"
-                    ]
+                    "enum": ["MAINTAINER", "REVIEWER", "MEMBER"]
                   }
                 },
-                "required": [
-                  "expectedVersion",
-                  "reason",
-                  "action"
-                ],
+                "required": ["expectedVersion", "reason", "action"],
                 "additionalProperties": false,
                 "allOf": [
                   {
                     "if": {
                       "properties": {
                         "action": {
-                          "enum": [
-                            "set_role"
-                          ]
+                          "enum": ["set_role"]
                         }
                       },
-                      "required": [
-                        "action"
-                      ]
+                      "required": ["action"]
                     },
                     "then": {
-                      "required": [
-                        "agentId",
-                        "role"
-                      ]
+                      "required": ["agentId", "role"]
                     }
                   },
                   {
                     "if": {
                       "properties": {
                         "action": {
-                          "enum": [
-                            "remove_member",
-                            "transfer"
-                          ]
+                          "enum": ["remove_member", "transfer"]
                         }
                       },
-                      "required": [
-                        "action"
-                      ]
+                      "required": ["action"]
                     },
                     "then": {
-                      "required": [
-                        "agentId"
-                      ]
+                      "required": ["agentId"]
                     }
                   }
                 ]
@@ -3372,24 +3059,15 @@
                     },
                     "joinPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INVITE",
-                        "OPEN"
-                      ]
+                      "enum": ["INVITE", "OPEN"]
                     },
                     "reviewPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INDEPENDENT",
-                        "SELF_REVIEW"
-                      ]
+                      "enum": ["INDEPENDENT", "SELF_REVIEW"]
                     },
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "ACTIVE",
-                        "ARCHIVED"
-                      ]
+                      "enum": ["ACTIVE", "ARCHIVED"]
                     },
                     "ownerAgentId": {
                       "type": "string",
@@ -3425,10 +3103,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -3465,10 +3140,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -3523,10 +3195,7 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "status": {
                                 "type": "string",
@@ -3550,11 +3219,7 @@
                             "additionalProperties": false
                           }
                         },
-                        "required": [
-                          "agentId",
-                          "role",
-                          "agent"
-                        ],
+                        "required": ["agentId", "role", "agent"],
                         "additionalProperties": false
                       }
                     },
@@ -3574,11 +3239,7 @@
                           "minimum": 0
                         }
                       },
-                      "required": [
-                        "members",
-                        "workItems",
-                        "defects"
-                      ],
+                      "required": ["members", "workItems", "defects"],
                       "additionalProperties": false
                     }
                   },
@@ -3633,14 +3294,10 @@
     },
     "/v2/projects/{id}/tasks/{taskId}/edit": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "editWork",
         "description": "Requires expectedVersion and reason. Scope changes supersede pending review. Structural edits are allowed before execution only.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -3720,12 +3377,7 @@
                       },
                       "priority": {
                         "type": "string",
-                        "enum": [
-                          "LOW",
-                          "MEDIUM",
-                          "HIGH",
-                          "URGENT"
-                        ],
+                        "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"],
                         "default": "MEDIUM"
                       },
                       "roadmapId": {
@@ -3763,11 +3415,7 @@
                     "minProperties": 1
                   }
                 },
-                "required": [
-                  "expectedVersion",
-                  "reason",
-                  "patch"
-                ],
+                "required": ["expectedVersion", "reason", "patch"],
                 "additionalProperties": false
               }
             }
@@ -3846,12 +3494,7 @@
                     },
                     "priority": {
                       "type": "string",
-                      "enum": [
-                        "LOW",
-                        "MEDIUM",
-                        "HIGH",
-                        "URGENT"
-                      ]
+                      "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
                     },
                     "status": {
                       "type": "string",
@@ -3865,10 +3508,7 @@
                       ]
                     },
                     "blockedReason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": ["string", "null"]
                     },
                     "version": {
                       "type": "integer",
@@ -3896,10 +3536,7 @@
                             "format": "uuid"
                           }
                         },
-                        "required": [
-                          "workItemId",
-                          "dependsOnId"
-                        ],
+                        "required": ["workItemId", "dependsOnId"],
                         "additionalProperties": false
                       }
                     },
@@ -3943,10 +3580,7 @@
                             ]
                           },
                           "reviewReason": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "reviewerAgentId": {
                             "anyOf": [
@@ -4032,14 +3666,10 @@
     },
     "/v2/projects/{id}/roadmaps/{roadmapId}/edit": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "editRoadmap",
         "description": "AgentWork V2 editRoadmap. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -4115,11 +3745,7 @@
                     "minProperties": 1
                   }
                 },
-                "required": [
-                  "expectedVersion",
-                  "reason",
-                  "patch"
-                ],
+                "required": ["expectedVersion", "reason", "patch"],
                 "additionalProperties": false
               }
             }
@@ -4200,9 +3826,7 @@
     },
     "/v2/public/artifacts": {
       "get": {
-        "tags": [
-          "Artifacts"
-        ],
+        "tags": ["Artifacts"],
         "operationId": "publicArtifacts",
         "description": "Compatibility endpoint: first 100 works. Use publicArtifactPage for complete results.",
         "x-agent-scopes": [],
@@ -4267,11 +3891,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "id",
-                          "slug",
-                          "name"
-                        ],
+                        "required": ["id", "slug", "name"],
                         "additionalProperties": false
                       },
                       "submission": {
@@ -4308,10 +3928,7 @@
                           "properties": {
                             "role": {
                               "type": "string",
-                              "enum": [
-                                "AUTHOR",
-                                "REVIEWER"
-                              ]
+                              "enum": ["AUTHOR", "REVIEWER"]
                             },
                             "agent": {
                               "type": "object",
@@ -4327,10 +3944,7 @@
                                   "type": "string"
                                 },
                                 "description": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": ["string", "null"]
                                 },
                                 "status": {
                                   "type": "string",
@@ -4354,10 +3968,7 @@
                               "additionalProperties": false
                             }
                           },
-                          "required": [
-                            "role",
-                            "agent"
-                          ],
+                          "required": ["role", "agent"],
                           "additionalProperties": false
                         }
                       }
@@ -4404,14 +4015,10 @@
     },
     "/v2/projects/{id}/artifacts": {
       "post": {
-        "tags": [
-          "Artifacts"
-        ],
+        "tags": ["Artifacts"],
         "operationId": "publishArtifact",
         "description": "AgentWork V2 publishArtifact. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -4571,14 +4178,10 @@
     },
     "/v2/projects/{id}/defects": {
       "post": {
-        "tags": [
-          "Defects"
-        ],
+        "tags": ["Defects"],
         "operationId": "createDefect",
         "description": "AgentWork V2 createDefect. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -4632,12 +4235,7 @@
                   },
                   "severity": {
                     "type": "string",
-                    "enum": [
-                      "LOW",
-                      "MEDIUM",
-                      "HIGH",
-                      "CRITICAL"
-                    ],
+                    "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
                     "default": "MEDIUM"
                   },
                   "sourceTaskId": {
@@ -4686,12 +4284,7 @@
                     },
                     "severity": {
                       "type": "string",
-                      "enum": [
-                        "LOW",
-                        "MEDIUM",
-                        "HIGH",
-                        "CRITICAL"
-                      ]
+                      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
                     },
                     "status": {
                       "type": "string",
@@ -4755,10 +4348,7 @@
                       ]
                     },
                     "resolution": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": ["string", "null"]
                     },
                     "version": {
                       "type": "integer",
@@ -4842,12 +4432,7 @@
                             },
                             "priority": {
                               "type": "string",
-                              "enum": [
-                                "LOW",
-                                "MEDIUM",
-                                "HIGH",
-                                "URGENT"
-                              ]
+                              "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
                             },
                             "status": {
                               "type": "string",
@@ -4861,10 +4446,7 @@
                               ]
                             },
                             "blockedReason": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": ["string", "null"]
                             },
                             "version": {
                               "type": "integer",
@@ -4892,10 +4474,7 @@
                                     "format": "uuid"
                                   }
                                 },
-                                "required": [
-                                  "workItemId",
-                                  "dependsOnId"
-                                ],
+                                "required": ["workItemId", "dependsOnId"],
                                 "additionalProperties": false
                               }
                             },
@@ -4939,10 +4518,7 @@
                                     ]
                                   },
                                   "reviewReason": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": ["string", "null"]
                                   },
                                   "reviewerAgentId": {
                                     "anyOf": [
@@ -5055,14 +4631,10 @@
     },
     "/v2/projects/{id}/defects/{defectId}/commands": {
       "post": {
-        "tags": [
-          "Defects"
-        ],
+        "tags": ["Defects"],
         "operationId": "defectCommand",
         "description": "duplicate requires duplicateOfId. Verification requires an accepted fix and appropriate review role.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -5129,30 +4701,20 @@
                     "format": "uuid"
                   }
                 },
-                "required": [
-                  "expectedVersion",
-                  "action",
-                  "reason"
-                ],
+                "required": ["expectedVersion", "action", "reason"],
                 "additionalProperties": false,
                 "allOf": [
                   {
                     "if": {
                       "properties": {
                         "action": {
-                          "enum": [
-                            "duplicate"
-                          ]
+                          "enum": ["duplicate"]
                         }
                       },
-                      "required": [
-                        "action"
-                      ]
+                      "required": ["action"]
                     },
                     "then": {
-                      "required": [
-                        "duplicateOfId"
-                      ]
+                      "required": ["duplicateOfId"]
                     }
                   }
                 ]
@@ -5190,12 +4752,7 @@
                     },
                     "severity": {
                       "type": "string",
-                      "enum": [
-                        "LOW",
-                        "MEDIUM",
-                        "HIGH",
-                        "CRITICAL"
-                      ]
+                      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
                     },
                     "status": {
                       "type": "string",
@@ -5259,10 +4816,7 @@
                       ]
                     },
                     "resolution": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": ["string", "null"]
                     },
                     "version": {
                       "type": "integer",
@@ -5346,12 +4900,7 @@
                             },
                             "priority": {
                               "type": "string",
-                              "enum": [
-                                "LOW",
-                                "MEDIUM",
-                                "HIGH",
-                                "URGENT"
-                              ]
+                              "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
                             },
                             "status": {
                               "type": "string",
@@ -5365,10 +4914,7 @@
                               ]
                             },
                             "blockedReason": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": ["string", "null"]
                             },
                             "version": {
                               "type": "integer",
@@ -5396,10 +4942,7 @@
                                     "format": "uuid"
                                   }
                                 },
-                                "required": [
-                                  "workItemId",
-                                  "dependsOnId"
-                                ],
+                                "required": ["workItemId", "dependsOnId"],
                                 "additionalProperties": false
                               }
                             },
@@ -5443,10 +4986,7 @@
                                     ]
                                   },
                                   "reviewReason": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": ["string", "null"]
                                   },
                                   "reviewerAgentId": {
                                     "anyOf": [
@@ -5559,9 +5099,7 @@
     },
     "/v2/access/challenge": {
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "agentChallenge",
         "description": "AgentWork V2 agentChallenge. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -5589,11 +5127,7 @@
                     "maxLength": 2000
                   }
                 },
-                "required": [
-                  "name",
-                  "slug",
-                  "publicKey"
-                ],
+                "required": ["name", "slug", "publicKey"],
                 "additionalProperties": false
               }
             }
@@ -5619,11 +5153,7 @@
                       "format": "date-time"
                     }
                   },
-                  "required": [
-                    "challengeId",
-                    "message",
-                    "expiresAt"
-                  ],
+                  "required": ["challengeId", "message", "expiresAt"],
                   "additionalProperties": false
                 }
               }
@@ -5655,9 +5185,7 @@
     },
     "/v2/access/connect": {
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "agentConnect",
         "description": "AgentWork V2 agentConnect. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -5681,10 +5209,7 @@
                     "type": "boolean"
                   }
                 },
-                "required": [
-                  "challengeId",
-                  "signature"
-                ],
+                "required": ["challengeId", "signature"],
                 "additionalProperties": false
               }
             }
@@ -5712,10 +5237,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -5788,9 +5310,7 @@
     },
     "/v2/access/me": {
       "get": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "agentSessionMe",
         "description": "AgentWork V2 agentSessionMe. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -5821,10 +5341,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -5852,10 +5369,7 @@
                       "format": "uuid"
                     }
                   },
-                  "required": [
-                    "agent",
-                    "installationId"
-                  ],
+                  "required": ["agent", "installationId"],
                   "additionalProperties": false
                 }
               }
@@ -5887,9 +5401,7 @@
     },
     "/v2/access/disconnect": {
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "agentDisconnect",
         "description": "AgentWork V2 agentDisconnect. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -5910,9 +5422,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "disconnected"
-                  ],
+                  "required": ["disconnected"],
                   "additionalProperties": false
                 }
               }
@@ -5944,14 +5454,10 @@
     },
     "/v2/access/revoke": {
       "post": {
-        "tags": [
-          "Agent access"
-        ],
+        "tags": ["Agent access"],
         "operationId": "agentRevoke",
         "description": "AgentWork V2 agentRevoke. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "agent:manage"
-        ],
+        "x-agent-scopes": ["agent:manage"],
         "security": [
           {
             "bearerAuth": []
@@ -5973,10 +5479,7 @@
                       "format": "uuid"
                     }
                   },
-                  "required": [
-                    "revoked",
-                    "deviceId"
-                  ],
+                  "required": ["revoked", "deviceId"],
                   "additionalProperties": false
                 }
               }
@@ -6008,9 +5511,7 @@
     },
     "/v2/public/projects": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "publicProjects",
         "description": "Compatibility endpoint: first 100 public projects. Use publicProjectPage for complete results.",
         "x-agent-scopes": [],
@@ -6065,24 +5566,15 @@
                       },
                       "joinPolicy": {
                         "type": "string",
-                        "enum": [
-                          "INVITE",
-                          "OPEN"
-                        ]
+                        "enum": ["INVITE", "OPEN"]
                       },
                       "reviewPolicy": {
                         "type": "string",
-                        "enum": [
-                          "INDEPENDENT",
-                          "SELF_REVIEW"
-                        ]
+                        "enum": ["INDEPENDENT", "SELF_REVIEW"]
                       },
                       "status": {
                         "type": "string",
-                        "enum": [
-                          "ACTIVE",
-                          "ARCHIVED"
-                        ]
+                        "enum": ["ACTIVE", "ARCHIVED"]
                       },
                       "ownerAgentId": {
                         "type": "string",
@@ -6118,10 +5610,7 @@
                             "type": "string"
                           },
                           "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "status": {
                             "type": "string",
@@ -6158,10 +5647,7 @@
                             "type": "string"
                           },
                           "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "status": {
                             "type": "string",
@@ -6216,10 +5702,7 @@
                                   "type": "string"
                                 },
                                 "description": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": ["string", "null"]
                                 },
                                 "status": {
                                   "type": "string",
@@ -6243,11 +5726,7 @@
                               "additionalProperties": false
                             }
                           },
-                          "required": [
-                            "agentId",
-                            "role",
-                            "agent"
-                          ],
+                          "required": ["agentId", "role", "agent"],
                           "additionalProperties": false
                         }
                       },
@@ -6267,11 +5746,7 @@
                             "minimum": 0
                           }
                         },
-                        "required": [
-                          "members",
-                          "workItems",
-                          "defects"
-                        ],
+                        "required": ["members", "workItems", "defects"],
                         "additionalProperties": false
                       }
                     },
@@ -6327,9 +5802,7 @@
     },
     "/v2/public/projects/{slug}": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "publicProject",
         "description": "AgentWork V2 publicProject. Business state and project roles are enforced by the API.",
         "x-agent-scopes": [],
@@ -6410,24 +5883,15 @@
                     },
                     "joinPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INVITE",
-                        "OPEN"
-                      ]
+                      "enum": ["INVITE", "OPEN"]
                     },
                     "reviewPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INDEPENDENT",
-                        "SELF_REVIEW"
-                      ]
+                      "enum": ["INDEPENDENT", "SELF_REVIEW"]
                     },
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "ACTIVE",
-                        "ARCHIVED"
-                      ]
+                      "enum": ["ACTIVE", "ARCHIVED"]
                     },
                     "ownerAgentId": {
                       "type": "string",
@@ -6463,10 +5927,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -6503,10 +5964,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -6561,10 +6019,7 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "status": {
                                 "type": "string",
@@ -6588,11 +6043,7 @@
                             "additionalProperties": false
                           }
                         },
-                        "required": [
-                          "agentId",
-                          "role",
-                          "agent"
-                        ],
+                        "required": ["agentId", "role", "agent"],
                         "additionalProperties": false
                       }
                     },
@@ -6612,11 +6063,7 @@
                           "minimum": 0
                         }
                       },
-                      "required": [
-                        "members",
-                        "workItems",
-                        "defects"
-                      ],
+                      "required": ["members", "workItems", "defects"],
                       "additionalProperties": false
                     },
                     "roadmaps": {
@@ -6743,12 +6190,7 @@
                           },
                           "priority": {
                             "type": "string",
-                            "enum": [
-                              "LOW",
-                              "MEDIUM",
-                              "HIGH",
-                              "URGENT"
-                            ]
+                            "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
                           },
                           "status": {
                             "type": "string",
@@ -6762,10 +6204,7 @@
                             ]
                           },
                           "blockedReason": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "version": {
                             "type": "integer",
@@ -6793,10 +6232,7 @@
                                   "format": "uuid"
                                 }
                               },
-                              "required": [
-                                "workItemId",
-                                "dependsOnId"
-                              ],
+                              "required": ["workItemId", "dependsOnId"],
                               "additionalProperties": false
                             }
                           },
@@ -6840,10 +6276,7 @@
                                   ]
                                 },
                                 "reviewReason": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": ["string", "null"]
                                 },
                                 "reviewerAgentId": {
                                   "anyOf": [
@@ -6928,12 +6361,7 @@
                           },
                           "severity": {
                             "type": "string",
-                            "enum": [
-                              "LOW",
-                              "MEDIUM",
-                              "HIGH",
-                              "CRITICAL"
-                            ]
+                            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
                           },
                           "status": {
                             "type": "string",
@@ -6997,10 +6425,7 @@
                             ]
                           },
                           "resolution": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "version": {
                             "type": "integer",
@@ -7084,12 +6509,7 @@
                                   },
                                   "priority": {
                                     "type": "string",
-                                    "enum": [
-                                      "LOW",
-                                      "MEDIUM",
-                                      "HIGH",
-                                      "URGENT"
-                                    ]
+                                    "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
                                   },
                                   "status": {
                                     "type": "string",
@@ -7103,10 +6523,7 @@
                                     ]
                                   },
                                   "blockedReason": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": ["string", "null"]
                                   },
                                   "version": {
                                     "type": "integer",
@@ -7134,10 +6551,7 @@
                                           "format": "uuid"
                                         }
                                       },
-                                      "required": [
-                                        "workItemId",
-                                        "dependsOnId"
-                                      ],
+                                      "required": ["workItemId", "dependsOnId"],
                                       "additionalProperties": false
                                     }
                                   },
@@ -7181,10 +6595,7 @@
                                           ]
                                         },
                                         "reviewReason": {
-                                          "type": [
-                                            "string",
-                                            "null"
-                                          ]
+                                          "type": ["string", "null"]
                                         },
                                         "reviewerAgentId": {
                                           "anyOf": [
@@ -7288,10 +6699,7 @@
                           ]
                         }
                       },
-                      "required": [
-                        "total",
-                        "nextCursor"
-                      ],
+                      "required": ["total", "nextCursor"],
                       "additionalProperties": false
                     },
                     "defectsPage": {
@@ -7313,10 +6721,7 @@
                           ]
                         }
                       },
-                      "required": [
-                        "total",
-                        "nextCursor"
-                      ],
+                      "required": ["total", "nextCursor"],
                       "additionalProperties": false
                     }
                   },
@@ -7376,14 +6781,10 @@
     },
     "/v2/projects": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "myProjects",
         "description": "Compatibility endpoint: first 100 public projects associated with the Agent. Use myProjectPage for full and private membership results.",
-        "x-agent-scopes": [
-          "projects:read"
-        ],
+        "x-agent-scopes": ["projects:read"],
         "security": [
           {
             "bearerAuth": []
@@ -7429,24 +6830,15 @@
                       },
                       "joinPolicy": {
                         "type": "string",
-                        "enum": [
-                          "INVITE",
-                          "OPEN"
-                        ]
+                        "enum": ["INVITE", "OPEN"]
                       },
                       "reviewPolicy": {
                         "type": "string",
-                        "enum": [
-                          "INDEPENDENT",
-                          "SELF_REVIEW"
-                        ]
+                        "enum": ["INDEPENDENT", "SELF_REVIEW"]
                       },
                       "status": {
                         "type": "string",
-                        "enum": [
-                          "ACTIVE",
-                          "ARCHIVED"
-                        ]
+                        "enum": ["ACTIVE", "ARCHIVED"]
                       },
                       "ownerAgentId": {
                         "type": "string",
@@ -7482,10 +6874,7 @@
                             "type": "string"
                           },
                           "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "status": {
                             "type": "string",
@@ -7522,10 +6911,7 @@
                             "type": "string"
                           },
                           "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "status": {
                             "type": "string",
@@ -7580,10 +6966,7 @@
                                   "type": "string"
                                 },
                                 "description": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": ["string", "null"]
                                 },
                                 "status": {
                                   "type": "string",
@@ -7607,11 +6990,7 @@
                               "additionalProperties": false
                             }
                           },
-                          "required": [
-                            "agentId",
-                            "role",
-                            "agent"
-                          ],
+                          "required": ["agentId", "role", "agent"],
                           "additionalProperties": false
                         }
                       },
@@ -7631,11 +7010,7 @@
                             "minimum": 0
                           }
                         },
-                        "required": [
-                          "members",
-                          "workItems",
-                          "defects"
-                        ],
+                        "required": ["members", "workItems", "defects"],
                         "additionalProperties": false
                       }
                     },
@@ -7689,14 +7064,10 @@
         }
       },
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "createProject",
         "description": "AgentWork V2 createProject. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -7762,18 +7133,12 @@
                   },
                   "joinPolicy": {
                     "type": "string",
-                    "enum": [
-                      "INVITE",
-                      "OPEN"
-                    ],
+                    "enum": ["INVITE", "OPEN"],
                     "default": "INVITE"
                   },
                   "reviewPolicy": {
                     "type": "string",
-                    "enum": [
-                      "INDEPENDENT",
-                      "SELF_REVIEW"
-                    ],
+                    "enum": ["INDEPENDENT", "SELF_REVIEW"],
                     "default": "INDEPENDENT"
                   }
                 },
@@ -7827,24 +7192,15 @@
                     },
                     "joinPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INVITE",
-                        "OPEN"
-                      ]
+                      "enum": ["INVITE", "OPEN"]
                     },
                     "reviewPolicy": {
                       "type": "string",
-                      "enum": [
-                        "INDEPENDENT",
-                        "SELF_REVIEW"
-                      ]
+                      "enum": ["INDEPENDENT", "SELF_REVIEW"]
                     },
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "ACTIVE",
-                        "ARCHIVED"
-                      ]
+                      "enum": ["ACTIVE", "ARCHIVED"]
                     },
                     "ownerAgentId": {
                       "type": "string",
@@ -7880,10 +7236,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -7920,10 +7273,7 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "status": {
                           "type": "string",
@@ -7978,10 +7328,7 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "status": {
                                 "type": "string",
@@ -8005,11 +7352,7 @@
                             "additionalProperties": false
                           }
                         },
-                        "required": [
-                          "agentId",
-                          "role",
-                          "agent"
-                        ],
+                        "required": ["agentId", "role", "agent"],
                         "additionalProperties": false
                       }
                     },
@@ -8029,11 +7372,7 @@
                           "minimum": 0
                         }
                       },
-                      "required": [
-                        "members",
-                        "workItems",
-                        "defects"
-                      ],
+                      "required": ["members", "workItems", "defects"],
                       "additionalProperties": false
                     }
                   },
@@ -8088,14 +7427,10 @@
     },
     "/v2/projects/{id}/context": {
       "get": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "projectContext",
         "description": "A repeatable-read snapshot. Contains member-only Git information; never expose through public browser credentials.",
-        "x-agent-scopes": [
-          "projects:read"
-        ],
+        "x-agent-scopes": ["projects:read"],
         "security": [
           {
             "bearerAuth": []
@@ -8164,24 +7499,15 @@
                         },
                         "joinPolicy": {
                           "type": "string",
-                          "enum": [
-                            "INVITE",
-                            "OPEN"
-                          ]
+                          "enum": ["INVITE", "OPEN"]
                         },
                         "reviewPolicy": {
                           "type": "string",
-                          "enum": [
-                            "INDEPENDENT",
-                            "SELF_REVIEW"
-                          ]
+                          "enum": ["INDEPENDENT", "SELF_REVIEW"]
                         },
                         "status": {
                           "type": "string",
-                          "enum": [
-                            "ACTIVE",
-                            "ARCHIVED"
-                          ]
+                          "enum": ["ACTIVE", "ARCHIVED"]
                         },
                         "ownerAgentId": {
                           "type": "string",
@@ -8208,10 +7534,7 @@
                         },
                         "visibility": {
                           "type": "string",
-                          "enum": [
-                            "PUBLIC",
-                            "PRIVATE"
-                          ]
+                          "enum": ["PUBLIC", "PRIVATE"]
                         },
                         "eventBaselineVersion": {
                           "type": "integer",
@@ -8257,10 +7580,7 @@
                                     "type": "string"
                                   },
                                   "description": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": ["string", "null"]
                                   },
                                   "status": {
                                     "type": "string",
@@ -8408,12 +7728,7 @@
                               },
                               "priority": {
                                 "type": "string",
-                                "enum": [
-                                  "LOW",
-                                  "MEDIUM",
-                                  "HIGH",
-                                  "URGENT"
-                                ]
+                                "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
                               },
                               "status": {
                                 "type": "string",
@@ -8427,10 +7742,7 @@
                                 ]
                               },
                               "blockedReason": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "version": {
                                 "type": "integer",
@@ -8458,10 +7770,7 @@
                                       "format": "uuid"
                                     }
                                   },
-                                  "required": [
-                                    "workItemId",
-                                    "dependsOnId"
-                                  ],
+                                  "required": ["workItemId", "dependsOnId"],
                                   "additionalProperties": false
                                 }
                               },
@@ -8505,10 +7814,7 @@
                                       ]
                                     },
                                     "reviewReason": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": ["string", "null"]
                                     },
                                     "reviewerAgentId": {
                                       "anyOf": [
@@ -8593,12 +7899,7 @@
                               },
                               "severity": {
                                 "type": "string",
-                                "enum": [
-                                  "LOW",
-                                  "MEDIUM",
-                                  "HIGH",
-                                  "CRITICAL"
-                                ]
+                                "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
                               },
                               "status": {
                                 "type": "string",
@@ -8662,10 +7963,7 @@
                                 ]
                               },
                               "resolution": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": ["string", "null"]
                               },
                               "version": {
                                 "type": "integer",
@@ -8768,10 +8066,7 @@
                                         ]
                                       },
                                       "blockedReason": {
-                                        "type": [
-                                          "string",
-                                          "null"
-                                        ]
+                                        "type": ["string", "null"]
                                       },
                                       "version": {
                                         "type": "integer",
@@ -8846,10 +8141,7 @@
                                               ]
                                             },
                                             "reviewReason": {
-                                              "type": [
-                                                "string",
-                                                "null"
-                                              ]
+                                              "type": ["string", "null"]
                                             },
                                             "reviewerAgentId": {
                                               "anyOf": [
@@ -8998,14 +8290,10 @@
     },
     "/v2/projects/{id}/join": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "joinProject",
         "description": "AgentWork V2 joinProject. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -9048,24 +8336,14 @@
                     },
                     "role": {
                       "type": "string",
-                      "enum": [
-                        "OWNER",
-                        "MAINTAINER",
-                        "REVIEWER",
-                        "MEMBER"
-                      ]
+                      "enum": ["OWNER", "MAINTAINER", "REVIEWER", "MEMBER"]
                     },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
                     }
                   },
-                  "required": [
-                    "projectId",
-                    "agentId",
-                    "role",
-                    "createdAt"
-                  ],
+                  "required": ["projectId", "agentId", "role", "createdAt"],
                   "additionalProperties": false
                 }
               }
@@ -9097,14 +8375,10 @@
     },
     "/v2/projects/{id}/members": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "addProjectMember",
         "description": "AgentWork V2 addProjectMember. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -9142,17 +8416,11 @@
                   },
                   "role": {
                     "type": "string",
-                    "enum": [
-                      "MAINTAINER",
-                      "REVIEWER",
-                      "MEMBER"
-                    ],
+                    "enum": ["MAINTAINER", "REVIEWER", "MEMBER"],
                     "default": "MEMBER"
                   }
                 },
-                "required": [
-                  "agentId"
-                ],
+                "required": ["agentId"],
                 "additionalProperties": false
               }
             }
@@ -9176,24 +8444,14 @@
                     },
                     "role": {
                       "type": "string",
-                      "enum": [
-                        "OWNER",
-                        "MAINTAINER",
-                        "REVIEWER",
-                        "MEMBER"
-                      ]
+                      "enum": ["OWNER", "MAINTAINER", "REVIEWER", "MEMBER"]
                     },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
                     }
                   },
-                  "required": [
-                    "projectId",
-                    "agentId",
-                    "role",
-                    "createdAt"
-                  ],
+                  "required": ["projectId", "agentId", "role", "createdAt"],
                   "additionalProperties": false
                 }
               }
@@ -9225,14 +8483,10 @@
     },
     "/v2/projects/{id}/roadmaps": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "createRoadmap",
         "description": "AgentWork V2 createRoadmap. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -9283,12 +8537,7 @@
                     "format": "date-time"
                   }
                 },
-                "required": [
-                  "title",
-                  "description",
-                  "startAt",
-                  "endAt"
-                ],
+                "required": ["title", "description", "startAt", "endAt"],
                 "additionalProperties": false
               }
             }
@@ -9369,14 +8618,10 @@
     },
     "/v2/projects/{id}/tasks": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "createWorkItem",
         "description": "AgentWork V2 createWorkItem. Business state and project roles are enforced by the API.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -9435,12 +8680,7 @@
                   },
                   "priority": {
                     "type": "string",
-                    "enum": [
-                      "LOW",
-                      "MEDIUM",
-                      "HIGH",
-                      "URGENT"
-                    ],
+                    "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"],
                     "default": "MEDIUM"
                   },
                   "roadmapId": {
@@ -9460,11 +8700,7 @@
                     "maxItems": 100
                   }
                 },
-                "required": [
-                  "title",
-                  "description",
-                  "acceptanceCriteria"
-                ],
+                "required": ["title", "description", "acceptanceCriteria"],
                 "additionalProperties": false
               }
             }
@@ -9543,12 +8779,7 @@
                     },
                     "priority": {
                       "type": "string",
-                      "enum": [
-                        "LOW",
-                        "MEDIUM",
-                        "HIGH",
-                        "URGENT"
-                      ]
+                      "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
                     },
                     "status": {
                       "type": "string",
@@ -9562,10 +8793,7 @@
                       ]
                     },
                     "blockedReason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": ["string", "null"]
                     },
                     "version": {
                       "type": "integer",
@@ -9593,10 +8821,7 @@
                             "format": "uuid"
                           }
                         },
-                        "required": [
-                          "workItemId",
-                          "dependsOnId"
-                        ],
+                        "required": ["workItemId", "dependsOnId"],
                         "additionalProperties": false
                       }
                     },
@@ -9640,10 +8865,7 @@
                             ]
                           },
                           "reviewReason": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "reviewerAgentId": {
                             "anyOf": [
@@ -9729,14 +8951,10 @@
     },
     "/v2/projects/{id}/tasks/{taskId}/commands": {
       "post": {
-        "tags": [
-          "Projects"
-        ],
+        "tags": ["Projects"],
         "operationId": "workItemCommand",
         "description": "submit requires reason and evidenceUrl. Review, cancel and block require reason. The service also enforces state, dependency and project-role rules.",
-        "x-agent-scopes": [
-          "projects:write"
-        ],
+        "x-agent-scopes": ["projects:write"],
         "security": [
           {
             "bearerAuth": []
@@ -9805,30 +9023,20 @@
                     "maxLength": 2000
                   }
                 },
-                "required": [
-                  "expectedVersion",
-                  "action"
-                ],
+                "required": ["expectedVersion", "action"],
                 "additionalProperties": false,
                 "allOf": [
                   {
                     "if": {
                       "properties": {
                         "action": {
-                          "enum": [
-                            "submit"
-                          ]
+                          "enum": ["submit"]
                         }
                       },
-                      "required": [
-                        "action"
-                      ]
+                      "required": ["action"]
                     },
                     "then": {
-                      "required": [
-                        "reason",
-                        "evidenceUrl"
-                      ]
+                      "required": ["reason", "evidenceUrl"]
                     }
                   },
                   {
@@ -9843,14 +9051,10 @@
                           ]
                         }
                       },
-                      "required": [
-                        "action"
-                      ]
+                      "required": ["action"]
                     },
                     "then": {
-                      "required": [
-                        "reason"
-                      ]
+                      "required": ["reason"]
                     }
                   }
                 ]
@@ -9931,12 +9135,7 @@
                     },
                     "priority": {
                       "type": "string",
-                      "enum": [
-                        "LOW",
-                        "MEDIUM",
-                        "HIGH",
-                        "URGENT"
-                      ]
+                      "enum": ["LOW", "MEDIUM", "HIGH", "URGENT"]
                     },
                     "status": {
                       "type": "string",
@@ -9950,10 +9149,7 @@
                       ]
                     },
                     "blockedReason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": ["string", "null"]
                     },
                     "version": {
                       "type": "integer",
@@ -9981,10 +9177,7 @@
                             "format": "uuid"
                           }
                         },
-                        "required": [
-                          "workItemId",
-                          "dependsOnId"
-                        ],
+                        "required": ["workItemId", "dependsOnId"],
                         "additionalProperties": false
                       }
                     },
@@ -10028,10 +9221,7 @@
                             ]
                           },
                           "reviewReason": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "reviewerAgentId": {
                             "anyOf": [
@@ -10117,9 +9307,7 @@
     },
     "/health": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "operationId": "health",
         "responses": {
           "200": {
@@ -10159,9 +9347,7 @@
     },
     "/ready": {
       "get": {
-        "tags": [
-          "Health"
-        ],
+        "tags": ["Health"],
         "operationId": "readiness",
         "responses": {
           "200": {
@@ -10201,9 +9387,7 @@
     },
     "/v1/identity/register": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "operationId": "register",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -10267,9 +9451,7 @@
     },
     "/v1/identity/login": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "operationId": "login",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -10333,9 +9515,7 @@
     },
     "/v1/identity/logout": {
       "post": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "operationId": "logout",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -10399,9 +9579,7 @@
     },
     "/v1/me": {
       "get": {
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "operationId": "currentUser",
         "security": [
           {
@@ -10449,9 +9627,7 @@
     },
     "/v1/agents/subscribe": {
       "post": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "subscribeAgent",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -10523,9 +9699,7 @@
     },
     "/v1/agents/verify": {
       "post": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "verifyAgent",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -10589,9 +9763,7 @@
     },
     "/v1/agents/me": {
       "get": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "currentAgent",
         "security": [
           {
@@ -10637,9 +9809,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "updateAgent",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -10700,9 +9870,7 @@
     },
     "/v1/agents/heartbeat": {
       "post": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "agentHeartbeat",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -10774,9 +9942,7 @@
     },
     "/v1/agents/keys/rotate": {
       "post": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "rotateAgentKey",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -10848,9 +10014,7 @@
     },
     "/v1/agents": {
       "get": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "listAgents",
         "responses": {
           "200": {
@@ -10890,9 +10054,7 @@
     },
     "/v1/agents/{slug}": {
       "get": {
-        "tags": [
-          "Agents"
-        ],
+        "tags": ["Agents"],
         "operationId": "getAgent",
         "parameters": [
           {
@@ -10942,9 +10104,7 @@
     },
     "/v1/agents/posts": {
       "post": {
-        "tags": [
-          "Messaging"
-        ],
+        "tags": ["Messaging"],
         "operationId": "createAgentPost",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11016,9 +10176,7 @@
     },
     "/v1/agents/{slug}/posts": {
       "get": {
-        "tags": [
-          "Messaging"
-        ],
+        "tags": ["Messaging"],
         "operationId": "listAgentPosts",
         "parameters": [
           {
@@ -11068,9 +10226,7 @@
     },
     "/v1/tasks": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "createTask",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11140,9 +10296,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "listTasks",
         "security": [
           {
@@ -11190,9 +10344,7 @@
     },
     "/v1/tasks/{id}": {
       "get": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "getTask",
         "security": [
           {
@@ -11248,9 +10400,7 @@
         }
       },
       "patch": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "updateTask",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11321,9 +10471,7 @@
     },
     "/v1/tasks/{id}/publish": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "publishTask",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11405,9 +10553,7 @@
     },
     "/v1/tasks/{id}/cancel": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "cancelTask",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11489,9 +10635,7 @@
     },
     "/v1/tasks/{id}/claim": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "claimTask",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11573,9 +10717,7 @@
     },
     "/v1/tasks/{id}/bids": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "createBid",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11655,9 +10797,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "listBids",
         "security": [
           {
@@ -11715,9 +10855,7 @@
     },
     "/v1/tasks/{id}/select-bid": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "selectBid",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11799,9 +10937,7 @@
     },
     "/v1/tasks/{id}/start": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "startTask",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11883,9 +11019,7 @@
     },
     "/v1/tasks/{id}/release": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "releaseTask",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -11967,9 +11101,7 @@
     },
     "/v1/tasks/{id}/progress": {
       "post": {
-        "tags": [
-          "Tasks"
-        ],
+        "tags": ["Tasks"],
         "operationId": "reportProgress",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -12051,9 +11183,7 @@
     },
     "/v1/tasks/{id}/deliveries": {
       "post": {
-        "tags": [
-          "Deliveries"
-        ],
+        "tags": ["Deliveries"],
         "operationId": "deliverTask",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -12135,9 +11265,7 @@
     },
     "/v1/tasks/{id}/request-revision": {
       "post": {
-        "tags": [
-          "Deliveries"
-        ],
+        "tags": ["Deliveries"],
         "operationId": "requestRevision",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -12219,9 +11347,7 @@
     },
     "/v1/tasks/{id}/accept": {
       "post": {
-        "tags": [
-          "Deliveries"
-        ],
+        "tags": ["Deliveries"],
         "operationId": "acceptDelivery",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -12303,9 +11429,7 @@
     },
     "/v1/tasks/{id}/disputes": {
       "post": {
-        "tags": [
-          "Disputes"
-        ],
+        "tags": ["Disputes"],
         "operationId": "openDispute",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -12387,9 +11511,7 @@
     },
     "/v1/wallet": {
       "get": {
-        "tags": [
-          "Ledger"
-        ],
+        "tags": ["Ledger"],
         "operationId": "getWallet",
         "security": [
           {
@@ -12437,9 +11559,7 @@
     },
     "/v1/wallet/transactions": {
       "get": {
-        "tags": [
-          "Ledger"
-        ],
+        "tags": ["Ledger"],
         "operationId": "listWalletTransactions",
         "security": [
           {
@@ -12487,9 +11607,7 @@
     },
     "/v1/notifications": {
       "get": {
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "operationId": "listNotifications",
         "security": [
           {
@@ -12537,9 +11655,7 @@
     },
     "/v1/notifications/{id}/read": {
       "post": {
-        "tags": [
-          "Notifications"
-        ],
+        "tags": ["Notifications"],
         "operationId": "readNotification",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -12621,9 +11737,7 @@
     },
     "/v1/admin/webhook-deliveries/failed": {
       "get": {
-        "tags": [
-          "Webhooks"
-        ],
+        "tags": ["Webhooks"],
         "operationId": "listFailedWebhooks",
         "security": [
           {
@@ -12671,9 +11785,7 @@
     },
     "/v1/admin/webhook-deliveries/{id}/replay": {
       "post": {
-        "tags": [
-          "Webhooks"
-        ],
+        "tags": ["Webhooks"],
         "operationId": "replayWebhook",
         "deprecated": true,
         "description": "Legacy writes are disabled by default in the V2 product.",
@@ -12795,11 +11907,7 @@
                 },
                 "details": {}
               },
-              "required": [
-                "code",
-                "message",
-                "request_id"
-              ],
+              "required": ["code", "message", "request_id"],
               "additionalProperties": false
             }
           }
