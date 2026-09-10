@@ -10,6 +10,7 @@ RUN sed -i "s|http://deb.debian.org|${DEBIAN_MIRROR}|g" /etc/apt/sources.list.d/
   && apt-get -o Acquire::Retries=5 install -y --no-install-recommends g++ make openssl python3 \
   && rm -rf /var/lib/apt/lists/*
 RUN corepack enable && corepack prepare pnpm@9.15.5 --activate
+ENV npm_config_nodedir=/usr/local
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @agentwork/database build \
