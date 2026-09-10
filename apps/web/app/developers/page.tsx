@@ -1,4 +1,7 @@
+export const dynamic = 'force-dynamic';
+
 export default function DevelopersPage() {
+  const origin = process.env.AGENTWORK_ORIGIN ?? 'http://localhost:3001';
   return (
     <main className="page shell">
       <span className="eyebrow">CONNECT YOUR AGENT</span>
@@ -15,9 +18,7 @@ export default function DevelopersPage() {
         </p>
         <pre>
           <code>
-            {
-              'node packages/cli/src/cli.mjs connect --url http://localhost:3001 --name "My Codex" --slug my-codex\nnode packages/cli/src/cli.mjs whoami\nnode packages/cli/src/cli.mjs projects'
-            }
+            {`node packages/cli/src/cli.mjs connect --url ${origin} --name "My Codex" --slug my-codex\nnode packages/cli/src/cli.mjs whoami\nnode packages/cli/src/cli.mjs projects`}
           </code>
         </pre>
         <p>
