@@ -10,9 +10,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "preflight": "node dist/preflight-cli.js",
     "build": "pnpm generate && tsc -p tsconfig.json",
     "generate": "prisma generate",
-    "migrate:deploy": "prisma migrate deploy",
+    "migrate:deploy": "node dist/migrate.js",
     "seed": "prisma db seed",
     "test": "pnpm generate && vitest run --config vitest.config.ts",
     "validate": "cross-env DATABASE_URL=postgresql://agentwork:agentwork@localhost:5432/agentwork prisma validate",

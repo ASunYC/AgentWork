@@ -1,4 +1,6 @@
 import { z } from 'zod';
+export * from './projects.js';
+export * from './responses-v2.js';
 
 export const healthResponseSchema = z.object({
   status: z.literal('ok'),

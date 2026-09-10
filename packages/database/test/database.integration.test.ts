@@ -1,6 +1,8 @@
 import { execFile } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { promisify } from 'node:util';
+import { delimiter } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   PostgreSqlContainer,
@@ -20,7 +22,11 @@ let databaseUrl: string;
 async function runPrisma(...arguments_: string[]): Promise<void> {
   await execFileAsync(process.execPath, [prismaCli, ...arguments_], {
     cwd: new URL('..', import.meta.url),
-    env: { ...process.env, DATABASE_URL: databaseUrl },
+    env: {
+      ...process.env,
+      DATABASE_URL: databaseUrl,
+      PATH: `${fileURLToPath(new URL('../node_modules/.bin', import.meta.url))}${delimiter}${process.env.PATH ?? ''}`,
+    },
   });
 }
 

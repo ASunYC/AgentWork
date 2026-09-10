@@ -207,28 +207,36 @@ model Organization {
 }
 
 model Agent {
-  id                String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  ownerUserId       String            @map("owner_user_id") @db.Uuid
-  organizationId    String?           @map("organization_id") @db.Uuid
-  slug              String            @unique
-  name              String
-  description       String?
-  status            AgentStatus       @default(PENDING_VERIFICATION)
-  verificationLevel VerificationLevel @default(UNVERIFIED) @map("verification_level")
-  manifestVersion   String            @map("manifest_version")
-  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
-  owner             User              @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
-  organization      Organization?     @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  endpoints         AgentEndpoint[]
-  capabilities      AgentCapability[]
-  heartbeats        AgentHeartbeat[]
-  apiKeys           ApiKey[]
-  bids              Bid[]
-  assignments       TaskAssignment[]
-  deliveries        Delivery[]
-  reviews           Review[]
-  posts             AgentPost[]
+  id                   String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ownerUserId          String?                @map("owner_user_id") @db.Uuid
+  organizationId       String?                @map("organization_id") @db.Uuid
+  slug                 String                 @unique
+  name                 String
+  description          String?
+  status               AgentStatus            @default(PENDING_VERIFICATION)
+  verificationLevel    VerificationLevel      @default(UNVERIFIED) @map("verification_level")
+  manifestVersion      String                 @map("manifest_version")
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  owner                User?                  @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
+  organization         Organization?          @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  endpoints            AgentEndpoint[]
+  capabilities         AgentCapability[]
+  heartbeats           AgentHeartbeat[]
+  apiKeys              ApiKey[]
+  bids                 Bid[]
+  assignments          TaskAssignment[]
+  deliveries           Delivery[]
+  reviews              Review[]
+  posts                AgentPost[]
+  installations        AgentInstallation[]
+  recoveryKey          AgentRecoveryKey?
+  accessEvents         AgentAccessEvent[]
+  projectNotifications ProjectNotification[]
+  ownedProjects        Project[]              @relation("ProjectOwner")
+  createdProjects      Project[]              @relation("ProjectCreator")
+  projectMemberships   ProjectMember[]
+  contributions        ArtifactContribution[]
 
   @@index([ownerUserId])
   @@index([organizationId])
@@ -545,13 +553,13 @@ model AgentPost {
 }
 
 model WebhookEvent {
-  id         String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  idempotencyKey String?       @unique @map("idempotency_key")
-  eventType  String            @map("event_type")
-  subjectId  String            @map("subject_id") @db.Uuid
-  payload    Json
-  createdAt  DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  deliveries WebhookDelivery[]
+  id             String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  idempotencyKey String?           @unique @map("idempotency_key")
+  eventType      String            @map("event_type")
+  subjectId      String            @map("subject_id") @db.Uuid
+  payload        Json
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  deliveries     WebhookDelivery[]
 
   @@index([eventType, createdAt])
   @@map("webhook_events")
@@ -588,6 +596,316 @@ model Notification {
 
   @@index([recipientId, readAt, createdAt])
   @@map("notifications")
+}
+
+enum ProjectRole {
+  OWNER
+  MAINTAINER
+  REVIEWER
+  MEMBER
+}
+
+enum WorkStatus {
+  DRAFT
+  READY
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+  CANCELLED
+}
+
+model AgentChallenge {
+  id                  String    @id @default(uuid()) @db.Uuid
+  publicKey           String
+  fingerprint         String
+  name                String
+  slug                String
+  message             String
+  sourceHash          String
+  purpose             String    @default("CONNECT")
+  agentId             String?   @db.Uuid
+  recoveryFingerprint String?
+  expiresAt           DateTime  @db.Timestamptz(6)
+  consumedAt          DateTime? @db.Timestamptz(6)
+  createdAt           DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([sourceHash, createdAt])
+  @@map("agent_challenges")
+}
+
+model AgentInstallation {
+  id          String         @id @default(uuid()) @db.Uuid
+  agentId     String         @db.Uuid
+  publicKey   String
+  fingerprint String         @unique
+  label       String         @default("Local device")
+  revokedAt   DateTime?      @db.Timestamptz(6)
+  createdAt   DateTime       @default(now()) @db.Timestamptz(6)
+  agent       Agent          @relation(fields: [agentId], references: [id], onDelete: Restrict)
+  sessions    AgentSession[]
+
+  @@map("agent_installations")
+}
+
+model AgentRecoveryKey {
+  agentId     String   @id @db.Uuid
+  publicKey   String
+  fingerprint String   @unique
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Restrict)
+
+  @@map("agent_recovery_keys")
+}
+
+model AgentAccessEvent {
+  id             String   @id @default(uuid()) @db.Uuid
+  agentId        String   @db.Uuid
+  action         String
+  installationId String?  @db.Uuid
+  details        Json
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  agent          Agent    @relation(fields: [agentId], references: [id], onDelete: Restrict)
+
+  @@index([agentId, createdAt])
+  @@map("agent_access_events")
+}
+
+model AgentSession {
+  id             String            @id @default(uuid()) @db.Uuid
+  installationId String            @db.Uuid
+  tokenHash      String            @unique
+  scopes         String[]
+  expiresAt      DateTime          @db.Timestamptz(6)
+  revokedAt      DateTime?         @db.Timestamptz(6)
+  createdAt      DateTime          @default(now()) @db.Timestamptz(6)
+  installation   AgentInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  @@index([installationId])
+  @@map("agent_sessions")
+}
+
+model Project {
+  id                   String          @id @default(uuid()) @db.Uuid
+  slug                 String          @unique
+  name                 String
+  description          String
+  categories           String[]
+  gitUrl               String
+  defaultBranch        String          @default("main")
+  visibility           String          @default("PUBLIC")
+  joinPolicy           String          @default("INVITE")
+  reviewPolicy         String          @default("INDEPENDENT")
+  status               String          @default("ACTIVE")
+  ownerAgentId         String          @db.Uuid
+  creatorAgentId       String          @db.Uuid
+  version              Int             @default(1)
+  eventBaselineVersion Int             @default(1)
+  createdAt            DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime        @updatedAt @db.Timestamptz(6)
+  owner                Agent           @relation("ProjectOwner", fields: [ownerAgentId], references: [id], onDelete: Restrict)
+  creator              Agent           @relation("ProjectCreator", fields: [creatorAgentId], references: [id], onDelete: Restrict)
+  members              ProjectMember[]
+  workItems            WorkItem[]
+  roadmaps             RoadmapItem[]
+  events               ProjectEvent[]
+  defects              ProjectDefect[]
+  artifacts            WorkArtifact[]
+
+  @@index([visibility, createdAt])
+  @@map("projects")
+}
+
+model ProjectMember {
+  projectId String      @db.Uuid
+  agentId   String      @db.Uuid
+  role      ProjectRole @default(MEMBER)
+  createdAt DateTime    @default(now()) @db.Timestamptz(6)
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  agent     Agent       @relation(fields: [agentId], references: [id], onDelete: Restrict)
+
+  @@id([projectId, agentId])
+  @@index([agentId])
+  @@map("project_members")
+}
+
+model RoadmapItem {
+  id          String     @id @default(uuid()) @db.Uuid
+  projectId   String     @db.Uuid
+  title       String
+  description String
+  startAt     DateTime   @db.Timestamptz(6)
+  endAt       DateTime   @db.Timestamptz(6)
+  version     Int        @default(1)
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  workItems   WorkItem[]
+
+  @@index([projectId, startAt])
+  @@map("roadmap_items")
+}
+
+model WorkItem {
+  id                 String           @id @default(uuid()) @db.Uuid
+  projectId          String           @db.Uuid
+  roadmapId          String?          @db.Uuid
+  parentId           String?          @db.Uuid
+  creatorAgentId     String           @db.Uuid
+  assigneeAgentId    String?          @db.Uuid
+  title              String
+  description        String
+  acceptanceCriteria String
+  category           String           @default("DEVELOPMENT")
+  priority           String           @default("MEDIUM")
+  status             WorkStatus       @default(DRAFT)
+  blockedReason      String?
+  version            Int              @default(1)
+  createdAt          DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime         @updatedAt @db.Timestamptz(6)
+  project            Project          @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  roadmap            RoadmapItem?     @relation(fields: [roadmapId], references: [id], onDelete: Restrict)
+  submissions        WorkSubmission[]
+  reportedDefects    ProjectDefect[]  @relation("DefectSource")
+  fixedDefects       ProjectDefect[]  @relation("DefectFix")
+  parent             WorkItem?        @relation("WorkHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children           WorkItem[]       @relation("WorkHierarchy")
+  dependencies       WorkDependency[] @relation("WorkPrerequisites")
+  dependents         WorkDependency[] @relation("WorkDependents")
+
+  @@index([projectId, status, createdAt])
+  @@map("work_items")
+}
+
+model WorkDependency {
+  workItemId  String   @db.Uuid
+  dependsOnId String   @db.Uuid
+  workItem    WorkItem @relation("WorkPrerequisites", fields: [workItemId], references: [id], onDelete: Cascade)
+  dependsOn   WorkItem @relation("WorkDependents", fields: [dependsOnId], references: [id], onDelete: Restrict)
+
+  @@id([workItemId, dependsOnId])
+  @@index([dependsOnId])
+  @@map("work_dependencies")
+}
+
+model WorkSubmission {
+  id              String        @id @default(uuid()) @db.Uuid
+  workItemId      String        @db.Uuid
+  agentId         String        @db.Uuid
+  summary         String
+  evidenceUrl     String
+  reviewDecision  String?
+  reviewReason    String?
+  reviewerAgentId String?       @db.Uuid
+  selfReviewed    Boolean       @default(false)
+  createdAt       DateTime      @default(now()) @db.Timestamptz(6)
+  workItem        WorkItem      @relation(fields: [workItemId], references: [id], onDelete: Restrict)
+  artifact        WorkArtifact?
+
+  @@index([workItemId, createdAt])
+  @@map("work_submissions")
+}
+
+model ProjectDefect {
+  id               String    @id @default(uuid()) @db.Uuid
+  projectId        String    @db.Uuid
+  title            String
+  reproduction     String
+  expectedBehavior String
+  environment      String
+  severity         String    @default("MEDIUM")
+  status           String    @default("OPEN")
+  reporterAgentId  String    @db.Uuid
+  verifierAgentId  String?   @db.Uuid
+  sourceTaskId     String?   @db.Uuid
+  fixTaskId        String?   @db.Uuid
+  duplicateOfId    String?   @db.Uuid
+  resolution       String?
+  version          Int       @default(1)
+  createdAt        DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @db.Timestamptz(6)
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  sourceTask       WorkItem? @relation("DefectSource", fields: [sourceTaskId], references: [id], onDelete: Restrict)
+  fixTask          WorkItem? @relation("DefectFix", fields: [fixTaskId], references: [id], onDelete: Restrict)
+
+  @@index([projectId, status, createdAt])
+  @@map("project_defects")
+}
+
+model WorkArtifact {
+  id                 String                 @id @default(uuid()) @db.Uuid
+  projectId          String                 @db.Uuid
+  submissionId       String                 @unique @db.Uuid
+  title              String
+  description        String
+  categories         String[]
+  publishedByAgentId String                 @db.Uuid
+  createdAt          DateTime               @default(now()) @db.Timestamptz(6)
+  project            Project                @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  submission         WorkSubmission         @relation(fields: [submissionId], references: [id], onDelete: Restrict)
+  contributions      ArtifactContribution[]
+
+  @@index([projectId, createdAt])
+  @@map("work_artifacts")
+}
+
+model ArtifactContribution {
+  artifactId String       @db.Uuid
+  agentId    String       @db.Uuid
+  role       String
+  artifact   WorkArtifact @relation(fields: [artifactId], references: [id], onDelete: Restrict)
+  agent      Agent        @relation(fields: [agentId], references: [id], onDelete: Restrict)
+
+  @@id([artifactId, agentId])
+  @@index([agentId])
+  @@map("artifact_contributions")
+}
+
+model ProjectEvent {
+  id                String                @id @default(uuid()) @db.Uuid
+  projectId         String                @db.Uuid
+  actorAgentId      String                @db.Uuid
+  type              String
+  resourceId        String                @db.Uuid
+  payload           Json
+  version           Int?
+  recipientAgentIds String[]              @default([]) @db.Uuid
+  deliveryStatus    String                @default("PENDING")
+  attempts          Int                   @default(0)
+  nextAttemptAt     DateTime              @default(now()) @db.Timestamptz(6)
+  deliveredAt       DateTime?             @db.Timestamptz(6)
+  lastError         String?
+  createdAt         DateTime              @default(now()) @db.Timestamptz(6)
+  project           Project               @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  notifications     ProjectNotification[]
+
+  @@unique([projectId, version])
+  @@index([projectId, createdAt])
+  @@index([deliveryStatus, nextAttemptAt])
+  @@map("project_events")
+}
+
+model ProjectNotification {
+  id        String       @id @default(uuid()) @db.Uuid
+  eventId   String       @db.Uuid
+  agentId   String       @db.Uuid
+  createdAt DateTime     @default(now()) @db.Timestamptz(6)
+  readAt    DateTime?    @db.Timestamptz(6)
+  event     ProjectEvent @relation(fields: [eventId], references: [id], onDelete: Restrict)
+  agent     Agent        @relation(fields: [agentId], references: [id], onDelete: Restrict)
+
+  @@unique([eventId, agentId])
+  @@index([agentId, readAt, createdAt])
+  @@map("project_notifications")
+}
+
+model ProjectCommand {
+  id           String   @id @default(uuid()) @db.Uuid
+  actorAgentId String   @db.Uuid
+  key          String
+  digest       String
+  result       Json
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([actorAgentId, key])
+  @@map("project_commands")
 }
 
 model AuditLog {
