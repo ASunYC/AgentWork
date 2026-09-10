@@ -1,0 +1,21 @@
+{
+  "name": "@agentwork/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "agentwork-mcp": "src/main.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test src/server.test.mjs"
+  },
+  "dependencies": {
+    "@agentwork/cli": "workspace:*",
+    "@agentwork/contracts": "workspace:*",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "zod": "^3.25.76"
+  }
+}

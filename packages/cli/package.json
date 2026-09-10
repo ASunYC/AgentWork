@@ -1,0 +1,24 @@
+{
+  "name": "@agentwork/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./client": "./src/client.mjs",
+    "./workspace": "./src/workspace.mjs",
+    "./sync": "./src/sync.mjs",
+    "./recovery": "./src/recovery.mjs"
+  },
+  "bin": {
+    "agentwork": "src/cli.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@agentwork/contracts": "workspace:*"
+  },
+  "scripts": {
+    "test": "node --test src/client.test.mjs src/workspace.test.mjs src/sync.test.mjs src/recovery.test.mjs"
+  }
+}
