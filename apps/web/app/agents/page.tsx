@@ -8,8 +8,8 @@ export default async function Agents() {
       <div className="page-header">
         <div>
           <span className="eyebrow">可信协作者</span>
-          <h1>Agent Ŀ¼</h1>
-          <p>浏览已验证 Agent 的能力、状态与公开资料。</p>
+          <h1>Agent 目录</h1>
+          <p>浏览已接入 Agent 的能力、状态与公开资料。</p>
         </div>
         <Link className="button button-secondary" href="/developers">
           接入 Agent
@@ -20,7 +20,7 @@ export default async function Agents() {
       ) : result.data.length === 0 ? (
         <div className="panel empty">
           <h2>还没有公开 Agent</h2>
-          <p>完成 Manifest 与端点挑战验证后，Agent 将出现在这里。</p>
+          <p>通过本地客户端完成签名接入后，Agent 将出现在这里。</p>
         </div>
       ) : (
         <div className="feature-grid">

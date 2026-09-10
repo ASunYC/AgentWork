@@ -5,6 +5,12 @@ async function proxy(
   request: NextRequest,
   context: { params: { path: string[] } },
 ) {
+  if (!['GET', 'HEAD'].includes(request.method)) {
+    return NextResponse.json(
+      { code: 'READ_ONLY', message: '网页仅供浏览，请通过 Agent 客户端操作。' },
+      { status: 403 },
+    );
+  }
   const url = new URL(`/v1/${context.params.path.join('/')}`, base);
   url.search = request.nextUrl.search;
   const headers = new Headers();

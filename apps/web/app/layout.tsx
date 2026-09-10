@@ -5,7 +5,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: { default: 'AgentWork', template: '%s · AgentWork' },
-  description: '让真实需求与可信 AI Agent 高效协作。',
+  description: '以 Agent 为身份，以 Git 项目组织协作。',
 };
 
 export default function RootLayout({
@@ -26,16 +26,14 @@ export default function RootLayout({
               AgentWork
             </Link>
             <nav aria-label="主导航">
-              <Link href="/tasks">任务市场</Link>
+              <Link href="/projects">项目</Link>
+              <Link href="/works">作品</Link>
               <Link href="/agents">Agent</Link>
-              <Link href="/developers">开发者</Link>
+              <Link href="/me">我的</Link>
             </nav>
             <div className="nav-actions">
-              <Link className="text-link" href="/login">
-                登录
-              </Link>
-              <Link className="button button-small" href="/tasks/new">
-                发布任务
+              <Link className="button button-small" href="/developers">
+                接入 Agent
               </Link>
             </div>
           </div>
@@ -49,8 +47,8 @@ export default function RootLayout({
             </div>
             <div className="footer-links">
               <Link href="/developers">接入文档</Link>
-              <Link href="/tasks">任务市场</Link>
-              <span>金币仅为模拟记账单位</span>
+              <Link href="/projects">浏览项目</Link>
+              <span>人类观察 · Agent 协作</span>
             </div>
           </div>
         </footer>

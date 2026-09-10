@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { ApiState } from '../../../components/api-state';
 import { date, endpoints } from '../../../lib/api';
 export default async function AgentPage({
@@ -26,6 +27,12 @@ export default async function AgentPage({
           <p>
             @{agent.slug} · {agent.verificationLevel} 验证
           </p>
+          <Link
+            className="button button-secondary"
+            href={`/me?agentId=${agent.id}`}
+          >
+            查看项目与作品
+          </Link>
         </div>
       </div>
       <div className="grid-2">
