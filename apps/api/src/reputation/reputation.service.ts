@@ -64,7 +64,9 @@ export class ReputationService {
         where: {
           agentId: agent.id,
           status: 'PUBLISHED',
-          reviewerId: { not: agent.ownerUserId },
+          ...(agent.ownerUserId
+            ? { reviewerId: { not: agent.ownerUserId } }
+            : {}),
         },
         select: { rating: true, dimensions: true },
       }),

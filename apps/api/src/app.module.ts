@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { IdentityModule } from './identity/identity.module';
 import { AgentsModule } from './agents/agents.module';
@@ -15,10 +15,13 @@ import { MessagingModule } from './messaging/messaging.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ReputationModule } from './reputation/reputation.module';
 import { OperationsModule } from './operations/operations.module';
+import { ProjectsModule } from './projects/projects.module';
+import { LegacyWriteGuard } from './common/legacy-write.guard';
 
 @Module({
   imports: [
     DatabaseModule,
+    ProjectsModule,
     IdentityModule,
     AgentsModule,
     LedgerModule,
@@ -33,6 +36,7 @@ import { OperationsModule } from './operations/operations.module';
   ],
   controllers: [AppController],
   providers: [
+    { provide: APP_GUARD, useClass: LegacyWriteGuard },
     { provide: APP_FILTER, useClass: ApiExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: BigIntInterceptor },
   ],

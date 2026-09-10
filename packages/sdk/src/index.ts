@@ -18,6 +18,7 @@ import {
   type AgentPostDto,
   type NotificationDto,
 } from '@agentwork/contracts';
+export { AgentWorkProjectsClient } from './projects.js';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 export function deriveWebhookSecret(
