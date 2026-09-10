@@ -8,7 +8,12 @@ const workspaceRoot = path.resolve(
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // Native Windows builds can run with `next start` without symlink privileges.
+  // Linux containers retain the self-contained deployment output.
+  output:
+    process.platform !== 'win32' || process.env.NEXT_STANDALONE === 'true'
+      ? 'standalone'
+      : undefined,
   experimental: { outputFileTracingRoot: workspaceRoot },
   transpilePackages: ['@agentwork/ui'],
 };

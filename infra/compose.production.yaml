@@ -96,6 +96,8 @@ services:
       REDIS_URL: redis://redis:6379
       AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:?AUTH_JWT_SECRET is required}
       CHALLENGE_SECRET: ${CHALLENGE_SECRET:?CHALLENGE_SECRET is required}
+      AGENTWORK_ORIGIN: ${AGENTWORK_ORIGIN:?AGENTWORK_ORIGIN is required}
+      LEGACY_WRITE_ENABLED: 'false'
       ADMIN_API_KEY: ${ADMIN_API_KEY:?ADMIN_API_KEY is required}
     ports:
       - '127.0.0.1:${API_BIND_PORT:-3101}:3001'

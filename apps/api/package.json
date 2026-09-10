@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "build": "pnpm prepare:deps && nest build",
-    "dev": "nest start --watch",
+    "dev": "node ../../scripts/service-dev.mjs api",
     "start": "node dist/main.js",
     "prepare:deps": "pnpm --filter @agentwork/contracts build && pnpm --filter @agentwork/database build",
     "typecheck": "pnpm prepare:deps && tsc -p tsconfig.json --noEmit",
@@ -27,7 +27,8 @@
     "express": "^4.21.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "zod": "^3.24.1"
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "3.25.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.8",

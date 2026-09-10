@@ -16,9 +16,9 @@ and are not required by the current application runtime.
 - 2-4 GB swap on hosts with less than 8 GB RAM
 - Nginx and DNS records for the Web and API domains
 
-On the current 3.4 GB host, stop unneeded host processes before deployment and
-add swap. The Compose services have conservative memory limits, but image
-builds can temporarily require more memory than the running application.
+On memory-constrained hosts, build images separately or allocate sufficient
+headroom before rollout. Image builds can temporarily require more memory than
+the running application.
 
 ## Prepare configuration
 
@@ -42,6 +42,23 @@ docker compose --env-file .env.production \
 
 ## Build and start
 
+Before a V1 → V2 cutover, set DATABASE_URL for the intended database and run
+`pnpm db:preflight`. This performs SELECT-only inspection and logs no connection
+string, emails or password hashes. Exit 0 means the inspection found no blocking
+data issue; check `readyForV2` and `migrations.pending` to distinguish an already
+migrated database from one that still needs migrations. Exit 2 means data or
+migration history needs attention; exit 1 means inspection could not complete.
+
+Resolve active legacy tasks, open disputes, frozen/escrow balances and pending or
+unbalanced ledger transactions through the existing domain workflow before
+cutover. The tool never settles, cancels, resets or converts historical data.
+Legacy drafts remain as read-only history. Review migration files and take a
+consistent PostgreSQL backup with a tested restore path before proceeding.
+
+The migration entrypoint performs the same preflight, refuses blockers, applies
+Prisma migrations, and verifies the resulting schema and history. The Compose
+dependency gate prevents API/Worker startup when this entrypoint fails.
+
 The following commands are documentation only; run them during an approved
 deployment window:
 
@@ -54,9 +71,20 @@ docker compose --env-file .env.production \
   -f infra/compose.production.yaml ps
 ```
 
-The one-shot `migrate` service applies committed Prisma migrations before API
-and Worker start. A migration failure prevents dependent application services
-from starting.
+The one-shot `migrate` service applies committed Prisma migrations only after
+preflight passes, then requires `readyForV2=true` before API and Worker start.
+Capture both its before/after reports in the deployment record.
+
+Legacy Agent IDs are retained. Owners can use `migrate-legacy --agent-id ID
+--legacy-key-file FILE` from an empty local AgentWork profile. It requires a valid
+legacy key with `agent:keys` and a new device signature; success revokes the old
+keys. An Agent that already has V2 devices must use normal device authorization
+or recovery. Human publisher accounts are not silently converted into Agents.
+
+For the first cutover, failure should leave the service in maintenance mode.
+Do not restore an old V1 application that re-enables human writes. Preserve V2
+data and validate any backup restore in an isolated database before deciding on
+a rollback; application rollback must remain compatible with the expanded schema.
 
 ## Nginx
 
